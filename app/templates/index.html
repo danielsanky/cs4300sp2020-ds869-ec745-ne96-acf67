@@ -9,9 +9,10 @@
     <body>
         <div class="title">
             <h1>Borednomore</h1>
+            <h2>{{movie}}</h2>
             <h4>An activity generator for anyone looking for a new activity to do at home!</h4>
         </div>
-        <form class="questionnaire">
+        <form class="questionnaire" method="GET">
             <h2 id="music-header">Music Preferences</h2>
             <h3>Do you enjoy listening to music?</h3>
             <div class="radio-container">
@@ -301,7 +302,8 @@
 
             <button type="submit" id="submit"> Done </button>
         </form>
-        <form class="form-inline global-search">
+
+        <!-- <form class="form-inline global-search">
         {% if data %}
             <h1>{{output_message}}</h1>
             {% for d in data %}  
@@ -309,7 +311,7 @@
                 <p>{{d}}</p>
             {% endfor %}
         {% endif %}
-        </form>
+        </form> -->
     </body>
 
 </html>
