@@ -3,16 +3,30 @@ from app.irsystem.models.helpers import *
 from app.irsystem.models.helpers import NumpyEncoder as NumpyEncoder
 import numpy as np 
 import pandas as pd 
+import collections
 
 #project_name = "Ilan's Cool Project Template"
 #net_id = "Ilan Filonenko: if56"
 
 @irsystem.route('/', methods=['GET'])
+def test():
+    return render_template('index.html')
+
+
+@irsystem.route('/submit/', methods=['GET'])
 def recommender():
-    query = request.args.getlist("interests")
-    podcast = podcast_recs(query)
-    movie = movie_recs(query)
-    return render_template('index.html', podcast=podcast, movie=movie)
+    podcast_query = request.args.getlist("interests")
+    movie_query = request.args.getlist("movie-genre")
+    if podcast_query!=[]:
+        podcast=recs(final_dict, podcast_query)
+    else:
+        podcast="We can't recommend you a podcast, since we don't know your interests!"
+    if movie_query!=[]:
+        movie=recs(genre_to_movie, movie_query)
+    else: 
+        movie="We can't recommend you a movie, since we don't know what genres you like!"
+
+    return render_template('index.html', podcast=podcast, movie="movie")
 
 #load data
 cols = pd.read_csv("young-people-survey\columns.csv")
@@ -54,22 +68,6 @@ for item in podcasts.index:
 
 final_dict={list(dict_pod.values())[p]:list(genre_to_podcast.values())[p] for p in range(len(genre_to_podcast.keys()))}
 
-def podcast_recs(query):
-    """Returns a list of podcasts based on interests user clicked in form
-    
-    Params: {genres: list or set of genre names}
-    Returns: list of podcast titles and scores
-    """
-    #compare input to genres in podcast data set 
-    #index podcast dataset by genre: all comedies in one list etc
-    #for genre in genres
-    #then for each one we find all the podcasts matching the genre ID
-    #then increment their score by something 
-    #scores={}
-    #for item in query: #['history', 'cooking']
-     #   =final_dict[item]
-    pass
-    
 movies=movies[:10000]
 
 genre_to_movie={}
@@ -82,16 +80,22 @@ for i in range(len(movies)):
             genre_to_movie[genre]=[movies["Title"][i]]
 
 
-def movie_recs(query):
-    """Returns a list of movies based on genres user clicked in form
-    
-    Params: {genres: list or set of genre names}
-    Returns: list of movie titles and scores
+def recs(genre_dict, query):
+    """Returns a list of podcasts based on interests user clicked in form
+    Params: {query: list of genre names, genre_dict: dictionary that maps genre to titles}
+    Returns: list of titles and scores
     """
-    #for item in query: 
 
-    pass
-    
+    arr=collections.Counter([[] + genre_dict[cat] for cat in query if cat in list(genre_dict.keys())][0])
+    if len(arr.keys())>5:
+	    return [(key,value) for key,value in arr.items()]
+    elif max(arr.values())==1:
+        converted_list=sorted(x.items(), key=lambda pair: pair[1], reverse=True)
+        return np.random.choice(converted_list,size=5, replace=False)
+    else:
+        return arr.most_common(5)
+
+
 
 #def music_recs():
 #    """Returns a list of songs based on genres user clicked in form
