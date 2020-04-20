@@ -5,9 +5,6 @@ import numpy as np
 import pandas as pd 
 import collections
 
-#project_name = "Ilan's Cool Project Template"
-#net_id = "Ilan Filonenko: if56"
-
 @irsystem.route('/', methods=['GET'])
 def test():
     return render_template('index.html')
@@ -26,7 +23,7 @@ def recommender():
     else: 
         movie="We can't recommend you a movie, since we don't know what genres you like!"
 
-    return render_template('index.html', podcast=podcast, movie="movie")
+    return render_template('results.html', podcast=podcast, movie=movie)
 
 #load data
 cols = pd.read_csv("young-people-survey/columns.csv")
