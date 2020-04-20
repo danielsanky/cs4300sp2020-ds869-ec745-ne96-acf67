@@ -17,11 +17,11 @@ def recommender():
     if podcast_query!=[]:
         podcast=recs(final_dict, podcast_query)
     else:
-        podcast="We can't recommend you a podcast, since we don't know your interests!"
+        podcast=["We can't recommend you a podcast, since we don't know your interests!"]
     if movie_query!=[]:
         movie=recs(genre_to_movie, movie_query)
     else: 
-        movie="We can't recommend you a movie, since we don't know what genres you like!"
+        movie=["We can't recommend you a movie, since we don't know what genres you like!"]
 
     return render_template('results.html', podcast=podcast, movie=movie)
 

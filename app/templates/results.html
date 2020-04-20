@@ -2,7 +2,7 @@
     <head>
         <!-- <link rel="stylesheet" href="/static/bootstrap.min.css"> -->
         <link rel="stylesheet" href="/static/main.css">
-        <title>What2Do</title>
+        <title>TellMeWhat2Do</title>
         <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@500&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@500&family=Shadows+Into+Light+Two&display=swap" rel="stylesheet">
     </head>
@@ -10,14 +10,22 @@
         <div class="results-container">
             <h1 id="results-header">Here are our suggestions on what to do!</h1>
             <h2 id="movie-results">Watch One of these Movies</h2>
-            {% for i in range(5) %}
-                <h4 class="movie-rec">{{ movie[i][0] }}</h4>
-            {% endfor %}
+            {% if movie|length == 1 %}
+                <h4 class="movie-rec">{{ movie[0] }}</h4>
+            {% else %}
+                {% for i in range(5) %}
+                    <h4 class="movie-rec">{{ movie[i][0] }}</h4>
+                {% endfor %}
+            {% endif %}
             <br/>
             <h2 id="podcast-results">Listen to One of these Podcasts</h2>
-            {% for i in range(5) %}
-                <h4>{{ podcast[i][0] }}</h4>
-            {% endfor %}
+            {% if podcast|length == 1 %}
+                <h4 class="movie-rec">{{ podcast[0] }}</h4>
+            {% else %}
+                {% for i in range(5) %}
+                    <h4>{{ podcast[i][0] }}</h4>
+                {% endfor %}
+            {% endif %}
         </div>
     </body>
 </html>
