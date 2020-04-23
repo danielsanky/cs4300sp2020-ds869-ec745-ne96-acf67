@@ -16,8 +16,8 @@ def back():
 
 @irsystem.route('/submit/', methods=['GET'])
 def recommender():
-    podcast_query = request.args.getlist("interests")
-    movie_query = request.args.getlist("movie-genre")
+    podcast_query = request.args.getlist("all-interests")
+    movie_query = request.args.getlist("all-movies")
     if podcast_query!=[]:
         podcast=recs(final_dict, podcast_query)
     else:

@@ -85,9 +85,9 @@ form {
     text-align: center;
 }
 
-#hobbies {
+/* #hobbies {
     margin-left: 60px;
-}
+} */
 
 .checkbox-container {
     display: inline-block;
@@ -122,11 +122,4 @@ hr {
     border-radius: 5px;
     margin-top: 50px;
     margin-bottom: 100px;
-}
-
-#help {
-    width: 50%;
-    text-align: center;
-    margin: 0;
-    align-content: center;
 }

@@ -1,7 +1,16 @@
 <html>
     <head>
         <!-- <link rel="stylesheet" href="/static/bootstrap.min.css"> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <link rel="stylesheet" href="/static/css/main.css">
+        <link rel="stylesheet" href="/static/css/select2.min.css">
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <script src="/static/js/select2.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('.js-example-basic-multiple').select2();
+            });
+        </script>
         <title>TellMeWhat2Do</title>
         <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@500&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@500&family=Shadows+Into+Light+Two&display=swap" rel="stylesheet">
@@ -29,6 +38,25 @@
             </div>
             <div id="music-container" class="feature">
                 <h3>What music genres do you like?</h3>
+                    <select class="js-example-basic-multiple" name="all-music" multiple="multiple" style="width: 40%;">
+                        <option id="dance/disco/funk" name="music-genre" value="dance/disco/funk">Dance/Disco/Funk</option>
+                        <option id="folk" name="music-genre" value="folk">Folk</option>
+                        <option id="country" name="music-genre" value="country">Country</option>
+                        <option id="Classical" name="music-genre" value="classical">Classical</option>
+                        <option id="musicals" name="music-genre" value="musicals">Musicals</option>
+                        <option id="pop" name="music-genre" value="pop">Pop</option>
+                        <option id="rock" name="music-genre" value="rock">Rock</option>
+                        <option id="metal" name="music-genre" value="metal">Metal</option>
+                        <option id="punk" name="music-genre" value="punk">Punk</option>
+                        <option id="hip-hop" name="music-genre" value="hip-hop">Hip-Hop</option>
+                        <option id="reggae" name="music-genre" value="reggae">Reggae</option>
+                        <option id="swing" name="music-genre" value="swing">Swing</option>
+                        <option id="rock-n-roll" name="music-genre" value="rock-n-roll">Rock 'n Roll</option>
+                        <option id="alt-music" name="music-genre" value="alt-music">Alternative</option>
+                        <option id="techno" name="music-genre" value="techno">Techno</option>
+                        <option id="opera" name="music-genre" value="opera">Opera</option>
+                    </select>
+                <!--
                 <div class="checkbox-container">
                     <input type="checkbox" id="dance/disco/funk" name="music-genre" value="dance/disco/funk">
                     <label>Dance/Disco/Funk</label><br/>
@@ -62,7 +90,7 @@
                     <label>Techno</label><br/>
                     <input type="checkbox" id="opera" name="music-genre" value="opera">
                     <label>Opera</label><br/>
-                </div>
+                </div> -->
             </div>
         <hr/>
             <h2 id="movie-header">Movie Preferences</h2>
@@ -75,61 +103,38 @@
             </div>
             <div id="movie-container" class="feature">
                 <h3>What movie genres do you like?</h3>
-                <div class="checkbox-container">
-                    <input type="checkbox" id="Horror" name="movie-genre" value="Horror">
-                    <label>Horror</label><br/>
-                    <input type="checkbox" id="Thriller" name="movie-genre" value="Thriller">
-                    <label>Thriller</label><br/>
-                    <input type="checkbox" id="Comedy" name="movie-genre" value="Comedy">
-                    <label>Comedy</label><br/>
-                    <input type="checkbox" id="Romance" name="movie-genre" value="Romance">
-                    <label>Romance</label><br/>
-                    <input type="checkbox" id="Sci-Fi" name="movie-genre" value="Sci-Fi">
-                    <label>Sci-Fi</label><br/>
-                    <input type="checkbox" id="War" name="movie-genre" value="War">
-                    <label>War</label><br/>
-                    <input type="checkbox" id="Fantasy" name="movie-genre" value="Fantasy">
-                    <label>Fantasy</label><br/>
-                    <input type="checkbox" id="Documentary" name="movie-genre" value="Documentary">
-                    <label>Documentary</label><br/>
-                    <input type="checkbox" id="Western" name="movie-genre" value="Western">
-                    <label>Western</label><br/>
-                    <input type="checkbox" id="Action" name="movie-genre" value="Action">
-                    <label>Action</label><br/>
-                </div>
+                <select class="js-example-basic-multiple" multiple="multiple" name="all-movies" style="width: 40%;">
+                    <option id="Horror" name="movie-genre" value="Horror">Horror</option>
+                    <option id="Thriller" name="movie-genre" value="Thriller">Thriller</option>
+                    <option id="Comedy" name="movie-genre" value="Comedy">Comedy</option>
+                    <option id="Romance" name="movie-genre" value="Romance">Romance</option>
+                    <option id="Sci-Fi" name="movie-genre" value="Sci-Fi">Sci-Fi</option>
+                    <option id="War" name="movie-genre" value="War">War</option>
+                    <option id="Fantasy" name="movie-genre" value="Fantasy">Fantasy</option>
+                    <option id="Documentary" name="movie-genre" value="Documentary">Documentary</option>
+                    <option id="Western" name="movie-genre" value="Western">Western</option>
+                    <option id="Action" name="movie-genre" value="Action">Action</option>  
+                </select>
             </div>
         <hr/>
-            <div id="hobbies" class="feature">
+            <div id="hobbies" class="feature"> 
                 <h2 id="hobby-header">Hobbies & Interests</h2>
                 <h3>Are you interested in these topics or hobbies?</h3>
-                <div class="checkbox-container">
-                    <input type="checkbox" id="News & Politics" name="interests" value="News & Politics">
-                    <label>News & Politics</label><br/>
-                    <input type="checkbox" id="Social Science" name="interests" value="Social Science">
-                    <label>Social Science</label><br/>
-                    <input type="checkbox" id="Science & Medicine" name="interests" value="Science & Medicine">
-                    <label>Science & Medicine</label><br/>
-                    <input type="checkbox" id="Society & Culture" name="interests" value="Society & Culture">
-                    <label>Society & Culture</label><br/>
-                    <input type="checkbox" id="Personal Journals" name="interests" value="Personal Journals">
-                    <label>Personal Journals</label><br/>
-                    <input type="checkbox" id="Education" name="interests" value="Education">
-                    <label>Education</label><br/>
-                    <input type="checkbox" id="Places & Travel" name="interests" value="Places & Travel">
-                    <label>Places & Travel</label><br/>
-                    <input type="checkbox" id="Sports & Recreation" name="interests" value="Sports & Recreation">
-                    <label>Sports & Recreation</label><br/>
-                    <input type="checkbox" id="Comedy" name="interests" value="Comedy">
-                    <label>Comedy</label><br/>
-                    <input type="checkbox" id="Religion & Spirituality" name="interests" value="Religion & Spirituality">
-                    <label>Religion & Spirituality</label><br/>
-                    <input type="checkbox" id="History" name="interests" value="History">
-                    <label>History</label><br/>
-                    <input type="checkbox" id="Music" name="interests" value="Music">
-                    <label>Music</label><br/>
-                    <input type="checkbox" id="Business" name="interests" value="Business">
-                    <label>Business</label><br/>
-
+                    <select class="js-example-basic-multiple" multiple="multiple" name="all-interests" style="width: 40%;">
+                        <option id="News & Politics" name="interests" value="News & Politics">News & Politics</option>
+                        <option id="Social Science" name="interests" value="Social Science">Social Science</option>
+                        <option id="Science & Medicine" name="interests" value="Science & Medicine">Science & Medicine</option>
+                        <option id="Society & Culture" name="interests" value="Society & Culture">Society & Culture</option>
+                        <option id="Personal Journals" name="interests" value="Personal Journals">Personal Journals</option>
+                        <option id="Education" name="interests" value="Education">Education</option>
+                        <option id="Places & Travel" name="interests" value="Places & Travel">Places & Travel</option>
+                        <option id="Sports & Recreation" name="interests" value="Sports & Recreation">Sports & Recreation</option>
+                        <option id="Comedy" name="interests" value="Comedy">Comedy</option>
+                        <option id="Religion & Spirituality" name="interests" value="Religion & Spirituality">Religion & Spirituality</option>
+                        <option id="History" name="interests" value="History">History</option>
+                        <option id="Music" name="interests" value="Music">Music</option>
+                        <option id="Business" name="interests" value="Business">Business</option>
+                    </select>
 
                     <!-- <input type="checkbox" id="history" name="interests" value="history">
                     <label>History</label><br/>
@@ -173,7 +178,6 @@
                     <label>Science and Technology</label><br/>
                     <input type="checkbox" id="pets" name="interests" value="pets">
                     <label>Pets</label><br/> -->
-                </div>
             </div>
         <hr/>
             <div id="personality-container" class="feature">
