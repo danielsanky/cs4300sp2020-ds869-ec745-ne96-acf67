@@ -23,7 +23,7 @@ body {
 
 .results-container {
     text-align: center;
-    margin-bottom: 100px;
+    margin-bottom: 20px;
 }
 
 h1 {
@@ -111,7 +111,7 @@ hr {
     width: 300px;
 }
 
-#submit {
+#submit, #back {
     width: 200px;
     height: 50px;
     color: white;
@@ -122,4 +122,11 @@ hr {
     border-radius: 5px;
     margin-top: 50px;
     margin-bottom: 100px;
+}
+
+#help {
+    width: 50%;
+    text-align: center;
+    margin: 0;
+    align-content: center;
 }

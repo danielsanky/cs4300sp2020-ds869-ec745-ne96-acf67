@@ -6,9 +6,13 @@ import pandas as pd
 import collections
 
 @irsystem.route('/', methods=['GET'])
-def test():
+def start():
     return render_template('index.html')
 
+
+@irsystem.route('/back/', methods=['POST'])
+def back():
+    return render_template('index.html')
 
 @irsystem.route('/submit/', methods=['GET'])
 def recommender():
