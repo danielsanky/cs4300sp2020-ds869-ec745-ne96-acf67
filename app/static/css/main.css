@@ -155,9 +155,9 @@ hr {
     margin-top: 60px;
 }
 
-.select2-results__option, .select2-results__mesage {
+/* .select2-results__option, .select2-results__mesage {
     display: none;
-}
+} */
 
 /* https://projects.lukehaas.me/css-loaders/ */
 .loader,

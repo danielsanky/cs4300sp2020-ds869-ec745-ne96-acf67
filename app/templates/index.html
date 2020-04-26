@@ -18,16 +18,16 @@
             }
             function callselect(){
                 $('.js-example-basic-multiple').select2({
-                    placeholder: "i.e. Classical",
+                    placeholder: "e.g. Classical",
                     minimumInputLength: 1
                 });
                 $('.js-example-basic-multiple2').select2({
-                    placeholder: "i.e. Horror",
+                    placeholder: "e.g. Horror",
                     minimumInputLength: 1
                 });
                 $('.js-example-basic-multiple3').select2({
-                    placeholder: "i.e. Places & Travel",
-                    minimumInputLength: 2
+                    placeholder: "e.g. Places & Travel",
+                    minimumInputLength: 1
                 });
             }
             function removeLoader(){
@@ -63,22 +63,22 @@
                         <option id="rock" name="music-genre" value="Rock">Rock</option>
                         <!-- <option id="metal" name="music-genre" value="metal">Metal</option>
                         <option id="punk" name="music-genre" value="punk">Punk</option> -->
-                        <option id="hip-hop" name="music-genre" value="Hip-Hop">Hip-Hop</option>
-                        <option id="r&b" name="music-genre" value="R&B">R&B</option>
+                        <!-- <option id="hip-hop" name="music-genre" value="Hip-Hop">Hip-Hop</option>
+                        <option id="r&b" name="music-genre" value="R&B">R&B</option> -->
                         <option id="reggae" name="music-genre" value="Reggae">Reggae</option>
                         <!-- <option id="swing" name="music-genre" value="swing">Swing</option> -->
                         <!-- <option id="rock-n-roll" name="music-genre" value="rock-n-roll">Rock 'n Roll</option> -->
                         <option id="alt-music" name="music-genre" value="Alternative">Alternative</option>
                         <option id="electronic" name="music-genre" value="Electronic">Electronic</option>
                         <option id="opera" name="music-genre" value="Opera">Opera</option>
-                        <option id="anime" name="music-genre" value="Anime">Anime</option>
+                        <!-- <option id="anime" name="music-genre" value="Anime">Anime</option>
                         <option id="blues" name="music-genre" value="Blues">Blues</option>
-                        <option id="rap" name="music-genre" value="Rap">Rap</option>
-                        <option id="indie" name="music-genre" value="Indie">Indie</option>
+                        <option id="rap" name="music-genre" value="Rap">Rap</option> -->
+                        <!-- <option id="indie" name="music-genre" value="Indie">Indie</option>
                         <option id="jazz" name="music-genre" value="Jazz">Jazz</option>
                         <option id="soul" name="music-genre" value="Soul">Soul</option>
                         <option id="world" name="music-genre" value="World">World</option>
-                        <option id="sountrack" name="music-genre" value="Soundtrack">Soundtrack</option>
+                        <option id="sountrack" name="music-genre" value="Soundtrack">Soundtrack</option> -->
                         
                         
                     </select>
@@ -104,14 +104,11 @@
                     <h3>What hobbies and/or interests do you have?</h3>
                     <select class="js-example-basic-multiple3" multiple="multiple" name="all-interests" style="width: 40%;">
                         <option id="News & Politics" name="interests" value="News & Politics">News & Politics</option>
-                        <option id="Social Science" name="interests" value="Social Sciences">Social Sciences</option>
-                        <option id="Science & Medicine" name="interests" value="Science & Medicine">Science & Medicine</option>
-                        <option id="Society & Culture" name="interests" value="Society & Culture">Society & Culture</option>
-                        <option id="Personal Journals" name="interests" value="Personal Journals">Personal Journals</option>
+                        <option id="Science & Medicine" name="interests" value="Science & Medicine">Science & Medicine</option> <option id="Social Sciences" name="interests" value="Social Sciences">Social Sciences</option>
+<!--                    <option id="Society & Culture" name="interests" value="Society & Culture">Society & Culture</option>
                         <option id="Education" name="interests" value="Education">Education</option>
-                        <option id="Places & Travel" name="interests" value="Places & Travel">Places & Travel</option>
+                        <option id="Places & Travel" name="interests" value="Places & Travel">Places & Travel</option> -->
                         <option id="Sports & Recreation" name="interests" value="Sports & Recreation">Sports & Recreation</option>
-                        <option id="Comedy" name="interests" value="Comedy">Comedy</option>
                         <option id="Religion & Spirituality" name="interests" value="Religion & Spirituality">Religion & Spirituality</option>
                         <option id="History" name="interests" value="History">History</option>
                         <option id="Music" name="interests" value="Music">Music</option>
@@ -119,7 +116,7 @@
                     </select>
                 </div>
 
-                <!-- <div id="personality-container" class="feature">
+                <div id="personality-container" class="feature">
                     <h2 id="personality-header">Personality Traits</h2>
                     <h4>You will be asked to rate how much you agree with the following statements from 1-5, where 1 is strongly disagree and 5 is strongly agree.</h4>
                     <h3>I often study or work even in my spare time.</h3>
@@ -226,37 +223,29 @@
                         <input type="radio" class="differ-hobbies" name="differ-hobbies" value="5">
                         <label class="radio">5</label>
                     </div>
-                    <h3>How much time do you spend online?</h3>
-                    <div class="radio-container">
-                        <input type="radio" class="online" name="online" value="no-time">
-                        <label class="radio">No time at all</label>
-                        <input type="radio" class="online" name="online" value="less-than-hour">
-                        <label class="radio">Less than an hour</label>
-                        <input type="radio" class="online" name="online" value="few-hours">
-                        <label class="radio">Few hours</label>
-                        <input type="radio" class="online" name="online" value="most-day">
-                        <label class="radio">Most of the day</label>
-                    </div>
                 </div>
             <hr/>
-                <h2 id="misc-header">Miscellaneous</h2>
+
+                <!-- <h2 id="misc-header">Miscellaneous</h2>
                 <h3>How old are you?</h3>
                 <input type="number" id="age" placeholder="18">
-                <h3>Are you right-handed?</h3>
+                <h3>What is your gender identity?</h3>
                 <div class="radio-container">
-                    <input type="radio" class="handed" name="handed" value="yes">
-                    <label class="radio">Yes</label>
-                    <input type="radio" class="handed" name="handed" value="no">
-                    <label class="radio">No</label>
+                    <input type="radio" class="gender" name="gender" value="female">
+                    <label class="radio">Woman</label>
+                    <input type="radio" class="gender" name="gender" value="male">
+                    <label class="radio">Man</label>
+                    <input type="radio" class="gender" name="gender" value="other">
+                    <label class="radio">Other</label>
                 </div>
-                <h3>Are you an only child?</h3>
+                <!-- <h3>Are you an only child?</h3>
                 <div class="radio-container">
                     <input type="radio" class="only-child" name="only-child" value="yes">
                     <label class="radio">Yes</label>
                     <input type="radio" class="only-child" name="only-child" value="no">
                     <label class="radio">No</label>
-                </div>
-                <h3>Highest Education Achieved?</h3>
+                </div> -->
+                <!-- <h3>Highest Education Achieved?</h3>
                 <div class="radio-container">
                     <input type="radio" class="education" name="education" value="yes">
                     <label class="radio">Currently in primary school</label>
@@ -266,7 +255,7 @@
                     <label class="radio">Secondary school</label>
                     <input type="radio" class="education" name="education" value="no">
                     <label class="radio">College/Bachelor degree</label>
-                </div>  -->
+                </div>  --> 
 
                 <button type="submit" id="submit"> Done </button>
             </form>
