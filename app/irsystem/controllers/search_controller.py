@@ -124,10 +124,10 @@ def recs(genre_dict, genre_query, corr_query):
                 else: 
                     counter[film]=weighted
 
-    arr = sorted(counter.items(), key=lambda x: x[1], reverse=True)
-    subset = arr[:100]
-    random.shuffle(subset)
-    return subset[:5]
+    results = list(counter.items())
+    random.shuffle(results)
+    results.sort(key=lambda x: x[1], reverse=True)
+    return results[:5]
 
 
 
