@@ -100,21 +100,33 @@ corr_mat.index = map(str.lower, corr_mat.index)
 
 
 def recs(genre_dict, genre_query, corr_query):
-    """Returns a list of podcasts based on interests user clicked in form
-    Params: {query: list of genre names, genre_dict: dictionary that maps genre to titles}
-    Returns: list of titles and scores
+    """Returns a list of recommendations based on interests user clicked in form
+    Params: {query: list of genre names, genre_dict: dictionary that maps genre to titles, corr_dict: maps personality questions to answers given in survey}
+    Returns: list of tuples containing titles and scores
     """
+    
     #query is an array of genre_names
     #corr_query is a dictionary of radio button responses like {'all-music': 'R&B', 'all-movies': 'Horror', 'all-interests': 'Social Sciences', 'gender': 'female', 'education': 'no'}
-    corr_query.pop('all-interests', None)
-    corr_query.pop('all-movies', None)
-    corr_query.pop('all-music', None)
-
+    if 'all-interests' in corr_query: 
+        corr_query.pop('all-interests')
+    if 'all-movies' in corr_query:
+        corr_query.pop('all-movies')
+    if 'all-music' in corr_query:
+        corr_query.pop('all-music')
+    if not corr_query: #check if empty
+        corr_query={'charity': '3', 'adapt': '3', 'meeting-people': '3', 'patient': '3', 'friends': '3', 'study': '3', 'perspectives': '3', 'differ-hobbies': '3' }
+        
     genre_query=[genre.lower() for genre in genre_query]
     
     counter={}
     for key in corr_query:
         val=float(corr_query[key]) 
+        if val > 3.0:
+            val = val - 3
+        elif val == 3.0:
+            val = 1
+        elif val < 3.0:
+            val = val* - 1
         for cat in genre_query: 
             corr=float(corr_mat[key][cat])
             weighted=corr*val
@@ -127,7 +139,13 @@ def recs(genre_dict, genre_query, corr_query):
     results = list(counter.items())
     random.shuffle(results)
     results.sort(key=lambda x: x[1], reverse=True)
-    return results[:5]
+    highest_score=results[0][1]
+   
+    output=[]
+    for result in results[:5]:
+        output.append((result[0], result[1]/highest_score))
+     
+    return output
 
 
 
