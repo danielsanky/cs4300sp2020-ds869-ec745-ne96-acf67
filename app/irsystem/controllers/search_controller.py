@@ -104,15 +104,11 @@ def recs(genre_dict, genre_query, corr_query):
     Params: {query: list of genre names, genre_dict: dictionary that maps genre to titles}
     Returns: list of titles and scores
     """
-    
     #query is an array of genre_names
     #corr_query is a dictionary of radio button responses like {'all-music': 'R&B', 'all-movies': 'Horror', 'all-interests': 'Social Sciences', 'gender': 'female', 'education': 'no'}
-    if 'all-interests' in corr_query: 
-        del corr_query['all-interests']
-    if 'all-movies' in corr_query:
-        del corr_query['all-movies']
-    if 'all-music' in corr_query:
-        del corr_query['all-music']
+    corr_query.pop('all-interests', None)
+    corr_query.pop('all-movies', None)
+    corr_query.pop('all-music', None)
 
     genre_query=[genre.lower() for genre in genre_query]
     
