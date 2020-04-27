@@ -44,12 +44,19 @@ h1 {
     color: rgb(68, 0, 0);
 }
 
+#music-results {
+    color: rgb(1, 25, 134);
+    font-size: 35px;
+}
+
 #movie-results {
     color: rebeccapurple;
+    font-size: 35px;
 }
 
 #podcast-results {
     color: rgb(131, 8, 8);
+    font-size: 35px;
 }
 
 /* #movie-sugg, #pod-sugg {
@@ -65,6 +72,15 @@ h2 {
 
 h3 {
     font-size: 25px;
+}
+
+.music-rec, .pod-rec, .movie-rec {
+    margin-bottom: 0;
+}
+
+.pod-sim, .music-sim, .movie-sim {
+    color: rgb(6, 105, 109);
+    margin: 5px;
 }
 
 #music-header {
@@ -92,7 +108,7 @@ form {
 }
 
 .radio {
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
 #hobbies, #music-container, #movie-container {
@@ -143,7 +159,7 @@ hr {
 }
 
 #content, .results-container {
-    background-color:rgba(255, 255, 255, 0.658);
+    background-color:rgba(255, 255, 255, 0.74);
     padding-top: 2px;
     width: 50%;
     margin: 0 auto;
@@ -158,6 +174,36 @@ hr {
 /* .select2-results__option, .select2-results__mesage {
     display: none;
 } */
+
+input[type='radio'] { 
+    transform: scale(1.5); 
+    border: 10px black solid;
+    cursor: pointer;
+}
+
+label {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+a {
+    color: black;
+}
+
+#directions {
+    padding: 0 50px 0 50px;
+    font-style: italic;
+    font-size: 22px;
+    color: rgb(68, 0, 0);
+}
+
+.personality-q {
+    font-size: 20px;
+}
+
+#return-container {
+    margin-top: 30px;
+}
 
 /* https://projects.lukehaas.me/css-loaders/ */
 .loader,

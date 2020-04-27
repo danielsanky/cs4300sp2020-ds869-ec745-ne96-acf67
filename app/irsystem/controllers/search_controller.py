@@ -26,19 +26,18 @@ def recommender():
     if music_query!=[]:
         song=recs(genre_to_music, music_query, form_data)
         song=[(item[0],item[1], "https://open.spotify.com/embed/track/"+list(music.loc[music["track_name"] == item[0]]["track_id"].to_dict().values())[0],list(music.loc[music["track_name"] == item[0]]["artist_name"].to_dict().values())[0] ) for item in song]
-
     else:
         song=["We can't recommend you a song, since you didn't select any genres!"]
 
     if podcast_query!=[]:
         podcast=recs(final_dict, podcast_query, form_data)
         podcast=[(item[0],item[1], list(podcasts.loc[podcasts["Name"] == item[0]]["Podcast URL"].to_dict().values())[0]) for item in podcast]
-
     else:
         podcast=["We can't recommend you a podcast, since we don't know your interests!"]
 
     if movie_query!=[]:
         movie=recs(genre_to_movie, movie_query, form_data)
+        movie=[(item[0],item[1], list(movies.loc[movies["Title"] == item[0]]["IMDB Score"].to_dict().values())[0]) for item in movie]
     else:
         movie=["We can't recommend you a movie, since we don't know what genres you like!"]
 
