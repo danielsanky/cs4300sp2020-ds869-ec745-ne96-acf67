@@ -1,10 +1,10 @@
-from . import *  
+from . import *
 from app.irsystem.models.helpers import *
 from app.irsystem.models.helpers import NumpyEncoder as NumpyEncoder
-import numpy as np 
-import pandas as pd 
+import numpy as np
+import pandas as pd
 import collections
-import random 
+import random
 
 @irsystem.route('/', methods=['GET'])
 def start():
@@ -17,7 +17,7 @@ def back():
 
 @irsystem.route('/submit/', methods=['POST', 'GET'])
 def recommender():
-    
+
     podcast_query = request.args.getlist("all-interests")
     movie_query = request.args.getlist("all-movies")
     music_query = request.args.getlist("all-music")
@@ -25,17 +25,21 @@ def recommender():
 
     if music_query!=[]:
         song=recs(genre_to_music, music_query, form_data)
+        song=[(item[0],item[1], "https://open.spotify.com/embed/track/"+list(music.loc[music["track_name"] == item[0]]["track_id"].to_dict().values())[0],list(music.loc[music["track_name"] == item[0]]["artist_name"].to_dict().values())[0] ) for item in song]
+
     else:
         song=["We can't recommend you a song, since you didn't select any genres!"]
 
     if podcast_query!=[]:
         podcast=recs(final_dict, podcast_query, form_data)
+        podcast=[(item[0],item[1], list(podcasts.loc[podcasts["Name"] == item[0]]["Podcast URL"].to_dict().values())[0]) for item in podcast]
+
     else:
         podcast=["We can't recommend you a podcast, since we don't know your interests!"]
-        
+
     if movie_query!=[]:
         movie=recs(genre_to_movie, movie_query, form_data)
-    else: 
+    else:
         movie=["We can't recommend you a movie, since we don't know what genres you like!"]
 
     return render_template('results.html', podcast=podcast, movie=movie, song=song, test=form_data)
@@ -51,7 +55,7 @@ genre_IDs=[['1311', 'News & Politics'], ['26', 'Podcasts'], ['1479', 'Social Sci
 # Better organize the id vs name of genre
 dict_pod={int(id[0]):id[1] for id in genre_IDs }
 
-# {Genre ID:NAMES OF PODCAST} 
+# {Genre ID:NAMES OF PODCAST}
 genre_to_podcast={key:[] for key in dict_pod }
 for item in podcasts.index:
     array=podcasts["Genre IDs"][item][1:-1].split(',')
@@ -60,7 +64,7 @@ for item in podcasts.index:
         genre_to_podcast[array[j]].append(podcasts["Name"][item])
 #final_dict={key.lower():value for key,value in final_dict}
 final_dict={list(dict_pod.values())[p]:list(genre_to_podcast.values())[p] for p in range(len(genre_to_podcast.keys()))}
-final_dict = dict((k.lower(), v) for k, v in final_dict.items()) 
+final_dict = dict((k.lower(), v) for k, v in final_dict.items())
 
 #MAKE MOVIE DICTIONARY
 genre_to_movie={}
@@ -70,7 +74,7 @@ for i in range(len(movies)):
         genre=genre.lower()
         if genre in genre_to_movie:
             genre_to_movie[genre].append(movies["Title"][i])
-        else: 
+        else:
             genre_to_movie[genre]=[movies["Title"][i]]
 
 #MAKE MUSIC DICTIONARY
@@ -79,9 +83,9 @@ for i in range(len(music)):
     genre=music['genre'][i]
     genre=genre.lower()
     if genre in genre_to_music:
-            genre_to_music[genre].append(music['track_name'][i]+" by "+music['artist_name'][i])
+            genre_to_music[genre].append(music['track_name'][i])
     else:
-            genre_to_music[genre]=[music['track_name'][i]+ " by "+music['artist_name'][i]]
+            genre_to_music[genre]=[music['track_name'][i]]
 
 
 #MAKE CORRELATION MATRIX
@@ -104,10 +108,10 @@ def recs(genre_dict, genre_query, corr_query):
     Params: {query: list of genre names, genre_dict: dictionary that maps genre to titles, corr_dict: maps personality questions to answers given in survey}
     Returns: list of tuples containing titles and scores
     """
-    
+
     #query is an array of genre_names
     #corr_query is a dictionary of radio button responses like {'all-music': 'R&B', 'all-movies': 'Horror', 'all-interests': 'Social Sciences', 'gender': 'female', 'education': 'no'}
-    if 'all-interests' in corr_query: 
+    if 'all-interests' in corr_query:
         corr_query.pop('all-interests')
     if 'all-movies' in corr_query:
         corr_query.pop('all-movies')
@@ -115,37 +119,34 @@ def recs(genre_dict, genre_query, corr_query):
         corr_query.pop('all-music')
     if not corr_query: #check if empty
         corr_query={'charity': '3', 'adapt': '3', 'meeting-people': '3', 'patient': '3', 'friends': '3', 'study': '3', 'perspectives': '3', 'differ-hobbies': '3' }
-        
+
     genre_query=[genre.lower() for genre in genre_query]
-    
+
     counter={}
     for key in corr_query:
-        val=float(corr_query[key]) 
+        val=float(corr_query[key])
         if val > 3.0:
             val = val - 3
         elif val == 3.0:
             val = 1
         elif val < 3.0:
             val = val* - 1
-        for cat in genre_query: 
+        for cat in genre_query:
             corr=float(corr_mat[key][cat])
             weighted=corr*val
             for film in genre_dict[cat]:
                 if film in counter:
                     counter[film]+=weighted
-                else: 
+                else:
                     counter[film]=weighted
 
     results = list(counter.items())
     random.shuffle(results)
     results.sort(key=lambda x: x[1], reverse=True)
     highest_score=results[0][1]
-   
+
     output=[]
     for result in results[:5]:
         output.append((result[0], result[1]/highest_score))
-     
+
     return output
-
-
-
