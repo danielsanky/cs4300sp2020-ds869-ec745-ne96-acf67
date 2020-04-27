@@ -34,6 +34,7 @@
             {% else %}
                 {% for i in range(5) %}
                 <h4 class="music-rec">{{ song[i][0] }}</h4>
+                <h4 class="music-rec">similarity score: {{ song[i][1] }}</h4>
                 {% endfor %}
             {% endif %}
             <br/>
@@ -44,6 +45,7 @@
             {% else %}
                 {% for i in range(5) %}
                     <h4 class="movie-rec">{{ movie[i][0] }}</h4>
+                    <h4 class="movie-rec">similarity score: {{ movie[i][1] }}</h4>
                 {% endfor %}
             {% endif %}
             <br/>
@@ -55,6 +57,7 @@
             {% else %}
                 {% for i in range(5) %}
                     <h4>{{ podcast[i][0] }}</h4>
+                    <h4 class="movie-rec">similarity score: {{ podcast[i][1] }}</h4>
                 {% endfor %}
             {% endif %}
             <form action="/back/" method="POST" id="return-container">
