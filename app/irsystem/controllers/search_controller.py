@@ -68,7 +68,7 @@ final_dict = dict((k.lower(), v) for k, v in final_dict.items())
 
 #MAKE MOVIE DICTIONARY
 genre_to_movie={}
-for i in range(len(movies)):
+for i in range( len(movies)):
     line=str(movies["Genre"][i])
     for genre in line.split("|"):
         genre=genre.lower()
