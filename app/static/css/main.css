@@ -20,16 +20,19 @@
     background-image: url("/static/images/rockingchair.jpg");
     background-repeat: no-repeat;
     background-size: cover;
-    align-content: center;;
+    align-content: center;
+    background-position: 50% 50%;
 }
 
 #result-body {
     overflow: hidden;
-    background-image: url("/static/images/headphones.jpg");
+    /* https://unsplash.com/photos/PDX_a_82obo */
+    background-image: url("/static/images/hey.jpg");
     background-repeat: no-repeat;
     background-size: cover;
-    align-content: center;;
+    align-content: center;
     font-family: 'Raleway', sans-serif;
+    background-position: 90% 50%;
 }
 
 .results-container {
