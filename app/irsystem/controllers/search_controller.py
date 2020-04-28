@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import collections
 import random
+import nltk
 
 @irsystem.route('/', methods=['GET'])
 def start():
@@ -24,19 +25,22 @@ def recommender():
     form_data = request.args.to_dict()
 
     if music_query!=[]:
-        song=recs(genre_to_music, music_query, form_data)
+        mod_music_query=mod_query(music_query, music_qs)
+        song=recs(genre_to_music, mod_music_query, form_data)
         song=[(item[0],item[1], "https://open.spotify.com/embed/track/"+list(music.loc[music["track_name"] == item[0]]["track_id"].to_dict().values())[0],list(music.loc[music["track_name"] == item[0]]["artist_name"].to_dict().values())[0] ) for item in song]
     else:
         song=["We can't recommend you a song, since you didn't select any genres!"]
 
     if podcast_query!=[]:
-        podcast=recs(final_dict, podcast_query, form_data)
+        mod_podcast_query=mod_query(podcast_query, podcast_qs)
+        podcast=recs(final_dict, mod_podcast_query, form_data)
         podcast=[(item[0],item[1], list(podcasts.loc[podcasts["Name"] == item[0]]["Podcast URL"].to_dict().values())[0]) for item in podcast]
     else:
         podcast=["We can't recommend you a podcast, since we don't know your interests!"]
 
     if movie_query!=[]:
-        movie=recs(genre_to_movie, movie_query, form_data)
+        mod_movie_query=mod_query(movie_query, movie_qs)
+        movie=recs(genre_to_movie, mod_movie_query, form_data)
         movie=[(item[0],item[1], list(movies.loc[movies["Title"] == item[0]]["IMDB Score"].to_dict().values())[0]) for item in movie]
     else:
         movie=["We can't recommend you a movie, since we don't know what genres you like!"]
@@ -49,6 +53,34 @@ podcasts=pd.read_csv("young-people-survey/df_popular_podcasts.csv")
 movies=pd.read_csv("young-people-survey/MovieGenre.csv")
 music=pd.read_csv("young-people-survey/SpotifyFeatures.csv")
 genre_IDs=[['1311', 'News & Politics'], ['26', 'Podcasts'], ['1479', 'Social Sciences'], ['1315', 'Science & Medicine'], ['1324', 'Society & Culture'], ['1302', 'Personal Journals'], ['1469', 'Language Courses'], ['1304', 'Education'], ['1320', 'Places & Travel'], ['1416', 'Higher Education'], ['1465', 'Professional'], ['1316', 'Sports & Recreation'], ['1303', 'Comedy'], ['1305', 'Kids & Family'], ['1439', 'Christianity'], ['1314', 'Religion & Spirituality'], ['1444', 'Spirituality'], ['1309', 'TV & Film'], ['1462', 'History'], ['1310', 'Music'], ['1478', 'Medicine'], ['1321', 'Business'], ['1412', 'Investing'], ['1420', 'Self-Help'], ['1307', 'Health'], ['1481', 'Alternative Health'], ['1417', 'Fitness & Nutrition'], ['1467', 'Amateur'], ['1480', 'Software How-To'], ['1318', 'Technology'], ['1448', 'Tech News'], ['1456', 'Outdoor'], ['1477', 'Natural Sciences'], ['1301', 'Arts'], ['1454', 'Automotive'], ['1323', 'Games & Hobbies'], ['1438', 'Buddhism'], ['1443', 'Philosophy'], ['1401', 'Literature'], ['1402', 'Design'], ['1410', 'Careers'], ['1470', 'Training'], ['1413', 'Management & Marketing'], ['1306', 'Food'], ['1406', 'Visual Arts'], ['1446', 'Gadgets'], ['1468', 'Educational Technology'], ['1405', 'Performing Arts'], ['1460', 'Hobbies'], ['1471', 'Business News'], ['1404', 'Video Games'], ['1450', 'Podcasting'], ['1473', 'National'], ['1325', 'Government & Organizations'], ['1461', 'Other Games'], ['1466', 'College & High School'], ['1459', 'Fashion & Beauty'], ['1476', 'Non-Profit'], ['1415', 'K-12'], ['1455', 'Aviation'], ['1464', 'Other'], ['1421', 'Sexuality'], ['1472', 'Shopping'], ['1475', 'Local'], ['1441', 'Judaism'], ['1440', 'Islam'], ['1474', 'Regional'], ['1463', 'Hinduism']]
+
+
+# Created lists of all the current query inputs in the form
+music_qs=["Dance", "Folk", "Country", "Classical","Pop", "Rock","Reggae","Alternative","Electronic","Opera"]
+movie_qs=["Horror","Thriller","Comedy","Romance","Sci-Fi","War","Fantasy","Documentary","Western","Action"]
+podcast_qs=["News & Politics","Science & Medicine","Sports & Recreation","Religion & Spirituality","History","Music","Business"]
+
+
+def mod_query(query, poss_q_list):
+    n_query=[]
+    for item in query:
+        if item in poss_q_list and not n_query:
+            n_query.append(item)
+        elif item in poss_q_list and n_query:  #Avoids duplicates
+            pass
+        else:
+        # Find edit distance of the words (all in lowercase)
+            ed_list=sorted([(q_term,nltk.edit_distance(item.lower(), q_term.lower(), substitution_cost=2)) for q_term in poss_q_list], key=lambda x:x[1])
+            print(ed_list)
+            i=0
+        # Iterate through ed_list until an item that isn't in n_query is found
+            while ed_list[i][0] in n_query and i<len(ed_list):
+                i+=1
+            #for the case when it reaches the final item in ed_list, and another confirmation that the word isn't inn_query
+            if ed_list[i][0] not in n_query:
+                n_query.append(ed_list[i][0])
+    return n_query
+
 
 
 # Better organize the id vs name of genre
