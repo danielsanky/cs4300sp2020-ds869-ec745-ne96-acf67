@@ -111,11 +111,11 @@ def recs(genre_dict, genre_query, corr_query):
     #query is an array of genre_names
     #corr_query is a dictionary of radio button responses like {'all-music': 'R&B', 'all-movies': 'Horror', 'all-interests': 'Social Sciences', 'gender': 'female', 'education': 'no'}
     if 'all-interests' in corr_query:
-        corr_query.pop('all-interests')
+        corr_query.pop('all-interests', None)
     if 'all-movies' in corr_query:
-        corr_query.pop('all-movies')
+        corr_query.pop('all-movies', None)
     if 'all-music' in corr_query:
-        corr_query.pop('all-music')
+        corr_query.pop('all-music', None)
     if not corr_query: #check if empty
         corr_query={'charity': '3', 'adapt': '3', 'meeting-people': '3', 'patient': '3', 'friends': '3', 'study': '3', 'perspectives': '3', 'differ-hobbies': '3' }
 
