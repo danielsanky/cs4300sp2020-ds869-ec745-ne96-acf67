@@ -52,7 +52,7 @@
 
 
             <h2 id="podcast-results">Listen to One of these Podcasts</h2>
-            {% if movies|length > 0 %}
+            {% if podcasts|length > 0 %}
                 {% for podcast in podcasts[:5] %}
                     <h4 class="pod-rec"><a href="{{ podcast['url'] }}" target="_blank">{{ podcast['title'] }}</a></h4>
                     <h4 class="pod-sim">Similarity Score: {{ podcast['score'] }}</h4></a>
