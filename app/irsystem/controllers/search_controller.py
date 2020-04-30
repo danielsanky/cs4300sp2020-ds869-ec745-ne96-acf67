@@ -28,21 +28,39 @@ def recommender():
     if music_query!=[]:
         mod_music_query=mod_query(music_query, music_qs)
         song=recs(genre_to_music, mod_music_query, form_data)
-        song=[(item[0],item[1], "https://open.spotify.com/embed/track/"+list(music.loc[music["track_name"] == item[0]]["track_id"].to_dict().values())[0],list(music.loc[music["track_name"] == item[0]]["artist_name"].to_dict().values())[0] ) for item in song]
+        song=[{
+            'title': item[0],
+            'score': item[1],
+            'url': "https://open.spotify.com/embed/track/"+list(music.loc[music["track_name"] == item[0]]["track_id"].to_dict().values())[0],
+            'artist': list(music.loc[music["track_name"] == item[0]]["artist_name"].to_dict().values())[0]
+            } for item in song]
     else:
         song=["We can't recommend you a song, since you didn't select any genres!"]
 
     if podcast_query!=[]:
         mod_podcast_query=mod_query(podcast_query, podcast_qs)
         podcast=recs(final_dict, mod_podcast_query, form_data)
-        podcast=[(item[0],item[1], list(podcasts.loc[podcasts["Name"] == item[0]]["Podcast URL"].to_dict().values())[0]) for item in podcast]
+        podcast=[{
+            'title': item[0],
+            'score': item[1],
+            'url': list(podcasts.loc[podcasts["Name"] == item[0]]["Podcast URL"].to_dict().values())[0]
+            } for item in podcast]
     else:
         podcast=["We can't recommend you a podcast, since we don't know your interests!"]
+
+    def movie_url(imdbid):
+        s = str(imdbid)
+        return "https://www.imdb.com/title/tt{0}/".format(s.zfill(7))
 
     if movie_query!=[]:
         mod_movie_query=mod_query(movie_query, movie_qs)
         movie=recs(genre_to_movie, mod_movie_query, form_data)
-        movie=[(item[0],item[1], list(movies.loc[movies["Title"] == item[0]]["IMDB Score"].to_dict().values())[0]) for item in movie]
+        movie=[{
+            'title': item[0],
+            'score': item[1],
+            'url': movie_url(list(movies.loc[movies["Title"] == item[0]]["imdbId"].to_dict().values())[0]),
+            'rating': list(movies.loc[movies["Title"] == item[0]]["IMDB Score"].to_dict().values())[0]
+            } for item in movie]
     else:
         movie=["We can't recommend you a movie, since we don't know what genres you like!"]
 
@@ -80,16 +98,17 @@ def mod_query(query, poss_q_list):
         elif item in poss_q_list and n_query:  #Avoids duplicates
             pass
         else:
-        # Find edit distance of the words (all in lowercase)
-            ed_list=sorted([(q_term,nltk.edit_distance(item.lower(), q_term.lower(), substitution_cost=2)) for q_term in poss_q_list], key=lambda x:x[1])
-            print(ed_list)
-            i=0
-        # Iterate through ed_list until an item that isn't in n_query is found
-            while ed_list[i][0] in n_query and i<len(ed_list):
-                i+=1
-            #for the case when it reaches the final item in ed_list, and another confirmation that the word isn't inn_query
-            if ed_list[i][0] not in n_query:
-                n_query.append(ed_list[i][0])
+            for token in item.lower().split(' '):
+                # Find edit distance of the words (all in lowercase)
+                ed_list=sorted([(q_term,nltk.edit_distance(token, q_term.lower(), substitution_cost=2)) for q_term in poss_q_list], key=lambda x:x[1])
+                print(ed_list)
+                i=0
+                # Iterate through ed_list until an item that isn't in n_query is found
+                while ed_list[i][0] in n_query and i<len(ed_list):
+                    i+=1
+                #for the case when it reaches the final item in ed_list, and another confirmation that the word isn't inn_query
+                if ed_list[i][0] not in n_query:
+                    n_query.append(ed_list[i][0])
     return n_query
 
 
