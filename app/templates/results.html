@@ -7,8 +7,8 @@
         <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@500&family=Shadows+Into+Light+Two&display=swap" rel="stylesheet">
         <script>
             $(window).on('load', function(){
-                setTimeout(removeLoader, 1600); //wait for page load PLUS 1.6 seconds.
-                setTimeout(showoverflow, 1600);
+                setTimeout(removeLoader, 1000); //wait for page load PLUS 1 second.
+                setTimeout(showoverflow, 1000);
             });
             function showoverflow(){
                 $('body').css("overflow", "visible"); /* Hide scrollbars */
