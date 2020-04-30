@@ -6,6 +6,7 @@ import pandas as pd
 import collections
 import random
 import nltk
+import re
 
 @irsystem.route('/', methods=['GET'])
 def start():
@@ -50,8 +51,18 @@ def recommender():
 #load data
 resp = pd.read_csv("young-people-survey/responses.csv")
 podcasts=pd.read_csv("young-people-survey/df_popular_podcasts.csv")
+word_exp=re.compile("([A-z])\w+")
+non_eng_pod=[index for index,value in enumerate(list(podcasts["Name"].to_dict().values())) if len(re.findall(word_exp,value))==0]
+podcasts=podcasts.drop(non_eng_pod).drop_duplicates("Name", keep="first")
+
 movies=pd.read_csv("young-people-survey/MovieGenre.csv")
+movies=movies.drop_duplicates("imdbId")
+movies=movies[movies["IMDB Score"].astype(float)>float(5.0)]
+
 music=pd.read_csv("young-people-survey/SpotifyFeatures.csv")
+music=music.drop_duplicates("track_id")
+music=music[music["popularity"].astype(float)>float(50)]
+
 genre_IDs=[['1311', 'News & Politics'], ['26', 'Podcasts'], ['1479', 'Social Sciences'], ['1315', 'Science & Medicine'], ['1324', 'Society & Culture'], ['1302', 'Personal Journals'], ['1469', 'Language Courses'], ['1304', 'Education'], ['1320', 'Places & Travel'], ['1416', 'Higher Education'], ['1465', 'Professional'], ['1316', 'Sports & Recreation'], ['1303', 'Comedy'], ['1305', 'Kids & Family'], ['1439', 'Christianity'], ['1314', 'Religion & Spirituality'], ['1444', 'Spirituality'], ['1309', 'TV & Film'], ['1462', 'History'], ['1310', 'Music'], ['1478', 'Medicine'], ['1321', 'Business'], ['1412', 'Investing'], ['1420', 'Self-Help'], ['1307', 'Health'], ['1481', 'Alternative Health'], ['1417', 'Fitness & Nutrition'], ['1467', 'Amateur'], ['1480', 'Software How-To'], ['1318', 'Technology'], ['1448', 'Tech News'], ['1456', 'Outdoor'], ['1477', 'Natural Sciences'], ['1301', 'Arts'], ['1454', 'Automotive'], ['1323', 'Games & Hobbies'], ['1438', 'Buddhism'], ['1443', 'Philosophy'], ['1401', 'Literature'], ['1402', 'Design'], ['1410', 'Careers'], ['1470', 'Training'], ['1413', 'Management & Marketing'], ['1306', 'Food'], ['1406', 'Visual Arts'], ['1446', 'Gadgets'], ['1468', 'Educational Technology'], ['1405', 'Performing Arts'], ['1460', 'Hobbies'], ['1471', 'Business News'], ['1404', 'Video Games'], ['1450', 'Podcasting'], ['1473', 'National'], ['1325', 'Government & Organizations'], ['1461', 'Other Games'], ['1466', 'College & High School'], ['1459', 'Fashion & Beauty'], ['1476', 'Non-Profit'], ['1415', 'K-12'], ['1455', 'Aviation'], ['1464', 'Other'], ['1421', 'Sexuality'], ['1472', 'Shopping'], ['1475', 'Local'], ['1441', 'Judaism'], ['1440', 'Islam'], ['1474', 'Regional'], ['1463', 'Hinduism']]
 
 
@@ -100,23 +111,23 @@ final_dict = dict((k.lower(), v) for k, v in final_dict.items())
 #MAKE MOVIE DICTIONARY
 genre_to_movie={}
 for i in range( len(movies)):
-    line=str(movies["Genre"][i])
+    line=str(movies.iloc[i]["Genre"])
     for genre in line.split("|"):
         genre=genre.lower()
         if genre in genre_to_movie:
-            genre_to_movie[genre].append(movies["Title"][i])
+            genre_to_movie[genre].append(movies.iloc[i]["Title"])
         else:
-            genre_to_movie[genre]=[movies["Title"][i]]
+            genre_to_movie[genre]=[movies.iloc[i]["Title"]]
 
 #MAKE MUSIC DICTIONARY
 genre_to_music={}
 for i in range(len(music)):
-    genre=music['genre'][i]
+    genre=music.iloc[i]['genre']
     genre=genre.lower()
     if genre in genre_to_music:
-            genre_to_music[genre].append(music['track_name'][i])
+            genre_to_music[genre].append(music.iloc[i]['track_name'])
     else:
-            genre_to_music[genre]=[music['track_name'][i]]
+            genre_to_music[genre]=[music.iloc[i]['track_name']]
 
 
 #MAKE CORRELATION MATRIX
