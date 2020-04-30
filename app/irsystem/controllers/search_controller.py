@@ -35,7 +35,7 @@ def recommender():
             'artist': list(music.loc[music["track_name"] == item[0]]["artist_name"].to_dict().values())[0]
             } for item in song]
     else:
-        song=["We can't recommend you a song, since you didn't select any genres!"]
+        song=[]
 
     if podcast_query!=[]:
         mod_podcast_query=mod_query(podcast_query, podcast_qs)
@@ -46,7 +46,7 @@ def recommender():
             'url': list(podcasts.loc[podcasts["Name"] == item[0]]["Podcast URL"].to_dict().values())[0]
             } for item in podcast]
     else:
-        podcast=["We can't recommend you a podcast, since we don't know your interests!"]
+        podcast=[]
 
     def movie_url(imdbid):
         s = str(imdbid)
@@ -62,7 +62,7 @@ def recommender():
             'rating': list(movies.loc[movies["Title"] == item[0]]["IMDB Score"].to_dict().values())[0]
             } for item in movie]
     else:
-        movie=["We can't recommend you a movie, since we don't know what genres you like!"]
+        movie=[]
 
     return render_template('results.html', podcasts=podcast, movies=movie, songs=song, test=form_data)
 
