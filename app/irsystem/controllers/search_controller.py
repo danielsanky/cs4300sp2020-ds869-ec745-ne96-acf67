@@ -6,6 +6,7 @@ import pandas as pd
 import collections
 import random
 import nltk
+import re
 
 @irsystem.route('/', methods=['GET'])
 def start():
@@ -27,31 +28,59 @@ def recommender():
     if music_query!=[]:
         mod_music_query=mod_query(music_query, music_qs)
         song=recs(genre_to_music, mod_music_query, form_data)
-        song=[(item[0],item[1], "https://open.spotify.com/embed/track/"+list(music.loc[music["track_name"] == item[0]]["track_id"].to_dict().values())[0],list(music.loc[music["track_name"] == item[0]]["artist_name"].to_dict().values())[0] ) for item in song]
+        song=[{
+            'title': item[0],
+            'score': item[1],
+            'url': "https://open.spotify.com/embed/track/"+list(music.loc[music["track_name"] == item[0]]["track_id"].to_dict().values())[0],
+            'artist': list(music.loc[music["track_name"] == item[0]]["artist_name"].to_dict().values())[0]
+            } for item in song]
     else:
-        song=["We can't recommend you a song, since you didn't select any genres!"]
+        song=[]
 
     if podcast_query!=[]:
         mod_podcast_query=mod_query(podcast_query, podcast_qs)
         podcast=recs(final_dict, mod_podcast_query, form_data)
-        podcast=[(item[0],item[1], list(podcasts.loc[podcasts["Name"] == item[0]]["Podcast URL"].to_dict().values())[0]) for item in podcast]
+        podcast=[{
+            'title': item[0],
+            'score': item[1],
+            'url': list(podcasts.loc[podcasts["Name"] == item[0]]["Podcast URL"].to_dict().values())[0]
+            } for item in podcast]
     else:
-        podcast=["We can't recommend you a podcast, since we don't know your interests!"]
+        podcast=[]
+
+    def movie_url(imdbid):
+        s = str(imdbid)
+        return "https://www.imdb.com/title/tt{0}/".format(s.zfill(7))
 
     if movie_query!=[]:
         mod_movie_query=mod_query(movie_query, movie_qs)
         movie=recs(genre_to_movie, mod_movie_query, form_data)
-        movie=[(item[0],item[1], list(movies.loc[movies["Title"] == item[0]]["IMDB Score"].to_dict().values())[0]) for item in movie]
+        movie=[{
+            'title': item[0],
+            'score': item[1],
+            'url': movie_url(list(movies.loc[movies["Title"] == item[0]]["imdbId"].to_dict().values())[0]),
+            'rating': list(movies.loc[movies["Title"] == item[0]]["IMDB Score"].to_dict().values())[0]
+            } for item in movie]
     else:
-        movie=["We can't recommend you a movie, since we don't know what genres you like!"]
+        movie=[]
 
-    return render_template('results.html', podcast=podcast, movie=movie, song=song, test=form_data)
+    return render_template('results.html', podcasts=podcast, movies=movie, songs=song, test=form_data)
 
 #load data
 resp = pd.read_csv("young-people-survey/responses.csv")
 podcasts=pd.read_csv("young-people-survey/df_popular_podcasts.csv")
+word_exp=re.compile("([A-z])\w+")
+non_eng_pod=[index for index,value in enumerate(list(podcasts["Name"].to_dict().values())) if len(re.findall(word_exp,value))==0]
+podcasts=podcasts.drop(non_eng_pod).drop_duplicates("Name", keep="first")
+
 movies=pd.read_csv("young-people-survey/MovieGenre.csv")
+movies=movies.drop_duplicates("imdbId")
+movies=movies[movies["IMDB Score"].astype(float)>float(5.0)]
+
 music=pd.read_csv("young-people-survey/SpotifyFeatures.csv")
+music=music.drop_duplicates("track_id")
+music=music[music["popularity"].astype(float)>float(50)]
+
 genre_IDs=[['1311', 'News & Politics'], ['26', 'Podcasts'], ['1479', 'Social Sciences'], ['1315', 'Science & Medicine'], ['1324', 'Society & Culture'], ['1302', 'Personal Journals'], ['1469', 'Language Courses'], ['1304', 'Education'], ['1320', 'Places & Travel'], ['1416', 'Higher Education'], ['1465', 'Professional'], ['1316', 'Sports & Recreation'], ['1303', 'Comedy'], ['1305', 'Kids & Family'], ['1439', 'Christianity'], ['1314', 'Religion & Spirituality'], ['1444', 'Spirituality'], ['1309', 'TV & Film'], ['1462', 'History'], ['1310', 'Music'], ['1478', 'Medicine'], ['1321', 'Business'], ['1412', 'Investing'], ['1420', 'Self-Help'], ['1307', 'Health'], ['1481', 'Alternative Health'], ['1417', 'Fitness & Nutrition'], ['1467', 'Amateur'], ['1480', 'Software How-To'], ['1318', 'Technology'], ['1448', 'Tech News'], ['1456', 'Outdoor'], ['1477', 'Natural Sciences'], ['1301', 'Arts'], ['1454', 'Automotive'], ['1323', 'Games & Hobbies'], ['1438', 'Buddhism'], ['1443', 'Philosophy'], ['1401', 'Literature'], ['1402', 'Design'], ['1410', 'Careers'], ['1470', 'Training'], ['1413', 'Management & Marketing'], ['1306', 'Food'], ['1406', 'Visual Arts'], ['1446', 'Gadgets'], ['1468', 'Educational Technology'], ['1405', 'Performing Arts'], ['1460', 'Hobbies'], ['1471', 'Business News'], ['1404', 'Video Games'], ['1450', 'Podcasting'], ['1473', 'National'], ['1325', 'Government & Organizations'], ['1461', 'Other Games'], ['1466', 'College & High School'], ['1459', 'Fashion & Beauty'], ['1476', 'Non-Profit'], ['1415', 'K-12'], ['1455', 'Aviation'], ['1464', 'Other'], ['1421', 'Sexuality'], ['1472', 'Shopping'], ['1475', 'Local'], ['1441', 'Judaism'], ['1440', 'Islam'], ['1474', 'Regional'], ['1463', 'Hinduism']]
 
 
@@ -69,16 +98,17 @@ def mod_query(query, poss_q_list):
         elif item in poss_q_list and n_query:  #Avoids duplicates
             pass
         else:
-        # Find edit distance of the words (all in lowercase)
-            ed_list=sorted([(q_term,nltk.edit_distance(item.lower(), q_term.lower(), substitution_cost=2)) for q_term in poss_q_list], key=lambda x:x[1])
-            print(ed_list)
-            i=0
-        # Iterate through ed_list until an item that isn't in n_query is found
-            while ed_list[i][0] in n_query and i<len(ed_list):
-                i+=1
-            #for the case when it reaches the final item in ed_list, and another confirmation that the word isn't inn_query
-            if ed_list[i][0] not in n_query:
-                n_query.append(ed_list[i][0])
+            for token in item.lower().split(' '):
+                # Find edit distance of the words (all in lowercase)
+                ed_list=sorted([(q_term,nltk.edit_distance(token, q_term.lower(), substitution_cost=2)) for q_term in poss_q_list], key=lambda x:x[1])
+                print(ed_list)
+                i=0
+                # Iterate through ed_list until an item that isn't in n_query is found
+                while ed_list[i][0] in n_query and i<len(ed_list):
+                    i+=1
+                #for the case when it reaches the final item in ed_list, and another confirmation that the word isn't inn_query
+                if ed_list[i][0] not in n_query:
+                    n_query.append(ed_list[i][0])
     return n_query
 
 
@@ -100,23 +130,23 @@ final_dict = dict((k.lower(), v) for k, v in final_dict.items())
 #MAKE MOVIE DICTIONARY
 genre_to_movie={}
 for i in range( len(movies)):
-    line=str(movies["Genre"][i])
+    line=str(movies.iloc[i]["Genre"])
     for genre in line.split("|"):
         genre=genre.lower()
         if genre in genre_to_movie:
-            genre_to_movie[genre].append(movies["Title"][i])
+            genre_to_movie[genre].append(movies.iloc[i]["Title"])
         else:
-            genre_to_movie[genre]=[movies["Title"][i]]
+            genre_to_movie[genre]=[movies.iloc[i]["Title"]]
 
 #MAKE MUSIC DICTIONARY
 genre_to_music={}
 for i in range(len(music)):
-    genre=music['genre'][i]
+    genre=music.iloc[i]['genre']
     genre=genre.lower()
     if genre in genre_to_music:
-            genre_to_music[genre].append(music['track_name'][i])
+            genre_to_music[genre].append(music.iloc[i]['track_name'])
     else:
-            genre_to_music[genre]=[music['track_name'][i]]
+            genre_to_music[genre]=[music.iloc[i]['track_name']]
 
 
 #MAKE CORRELATION MATRIX

@@ -7,8 +7,8 @@
         <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@500&family=Shadows+Into+Light+Two&display=swap" rel="stylesheet">
         <script>
             $(window).on('load', function(){
-                setTimeout(removeLoader, 1600); //wait for page load PLUS 1.6 seconds.
-                setTimeout(showoverflow, 1600);
+                setTimeout(removeLoader, 1000); //wait for page load PLUS 1 second.
+                setTimeout(showoverflow, 1000);
             });
             function showoverflow(){
                 $('body').css("overflow", "visible"); /* Hide scrollbars */
@@ -29,37 +29,38 @@
         <div class="results-container">
             <h1 id="results-header">Here are our suggestions on what to do!</h1>
             <h2 id="music-results">Listen to One of these Songs</h2>
-            {% if song|length == 1 %}
-                <h4 class="music-rec">{{ song[0] }}</h4>
-            {% else %}
-                {% for i in range(5) %}
-                    <h4 class="music-rec"><a href={{ song[i][2] }} target="_blank">{{ song[i][0] }} by {{ song[i][3] }}</a></h4>
-                    <h4 class="music-sim">Similarity Score: {{ song[i][1] }}</h4>
+            {% if songs|length > 0 %}
+                {% for song in songs[:5] %}
+                    <h4 class="music-rec"><a href="{{ song['url'] }}" target="_blank">{{ song['title'] }} by {{ song['artist'] }}</a></h4>
+                    <h4 class="music-sim">Similarity Score: {{ song['score'] }}</h4>
                 {% endfor %}
+            {% else %}
+                <h4 class="music-rec">We can't recommend you a song, since you didn't select any genres!</h4>
             {% endif %}
             <br/>
 
             <h2 id="movie-results">Watch One of these Movies</h2>
-            {% if movie|length == 1 %}
-                <h4 class="movie-rec">{{ movie[0] }}</h4>
-            {% else %}
-                {% for i in range(5) %}
-                    <h4 class="movie-rec">{{ movie[i][0] }}</h4>
-                    <h4 class="movie-sim">Similarity Score: {{ movie[i][1] }}&#8194;|&#8194;Rating: {{ movie[i][2] }}/10.0</h4>
+            {% if movies|length > 0 %}
+                {% for movie in movies[:5] %}
+                    <h4 class="movie-rec"><a href="{{ movie['url'] }}" target="_blank">{{ movie['title'] }}</a></h4>
+                    <h4 class="movie-sim">Similarity Score: {{ movie['score'] }}&#8194;|&#8194;Rating: {{ movie['rating'] }}/10.0</h4>
                 {% endfor %}
+            {% else %}
+                <h4 class="movie-rec">We can't recommend you a movie, since we don't know what genres you like!</h4>
             {% endif %}
             <br/>
 
 
             <h2 id="podcast-results">Listen to One of these Podcasts</h2>
-            {% if podcast|length == 1 %}
-                <h4 class="pod-rec">{{ podcast[0] }}</h4>
-            {% else %}
-                {% for i in range(5) %}
-                    <h4 class="pod-rec"><a href={{ podcast[i][2] }} target="_blank">{{ podcast[i][0] }}</a></h4>
-                    <h4 class="pod-sim">Similarity Score: {{ podcast[i][1] }}</h4></a>
+            {% if podcasts|length > 0 %}
+                {% for podcast in podcasts[:5] %}
+                    <h4 class="pod-rec"><a href="{{ podcast['url'] }}" target="_blank">{{ podcast['title'] }}</a></h4>
+                    <h4 class="pod-sim">Similarity Score: {{ podcast['score'] }}</h4></a>
                 {% endfor %}
+            {% else %}
+                <h4 class="pod-rec">We can't recommend you a podcast, since we don't know your interests!</h4>
             {% endif %}
+
             <form action="/back/" method="POST" id="return-container">
                 <button id="back">Take Quiz Again</button>
             
