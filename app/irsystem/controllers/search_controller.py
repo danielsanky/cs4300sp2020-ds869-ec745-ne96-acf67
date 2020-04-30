@@ -47,12 +47,17 @@ def recommender():
     else:
         podcast=["We can't recommend you a podcast, since we don't know your interests!"]
 
+    def movie_url(imdbid):
+        s = str(imdbid)
+        return "https://www.imdb.com/title/tt{0}/".format(s.zfill(7))
+
     if movie_query!=[]:
         mod_movie_query=mod_query(movie_query, movie_qs)
         movie=recs(genre_to_movie, mod_movie_query, form_data)
         movie=[{
             'title': item[0],
             'score': item[1],
+            'url': movie_url(list(movies.loc[movies["Title"] == item[0]]["imdbId"].to_dict().values())[0]),
             'rating': list(movies.loc[movies["Title"] == item[0]]["IMDB Score"].to_dict().values())[0]
             } for item in movie]
     else:

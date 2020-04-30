@@ -44,7 +44,7 @@
                 <h4 class="movie-rec">{{ movie[0] }}</h4>
             {% else %}
                 {% for i in range(5) %}
-                    <h4 class="movie-rec">{{ movie[i]['title'] }}</h4>
+                    <h4 class="movie-rec"><a href="{{ movie[i]['url'] }}" target="_blank">{{ movie[i]['title'] }}</a></h4>
                     <h4 class="movie-sim">Similarity Score: {{ movie[i]['score'] }}&#8194;|&#8194;Rating: {{ movie[i]['rating'] }}/10.0</h4>
                 {% endfor %}
             {% endif %}
