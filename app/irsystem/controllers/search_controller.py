@@ -69,16 +69,17 @@ def mod_query(query, poss_q_list):
         elif item in poss_q_list and n_query:  #Avoids duplicates
             pass
         else:
-        # Find edit distance of the words (all in lowercase)
-            ed_list=sorted([(q_term,nltk.edit_distance(item.lower(), q_term.lower(), substitution_cost=2)) for q_term in poss_q_list], key=lambda x:x[1])
-            print(ed_list)
-            i=0
-        # Iterate through ed_list until an item that isn't in n_query is found
-            while ed_list[i][0] in n_query and i<len(ed_list):
-                i+=1
-            #for the case when it reaches the final item in ed_list, and another confirmation that the word isn't inn_query
-            if ed_list[i][0] not in n_query:
-                n_query.append(ed_list[i][0])
+            for token in item.lower().split(' '):
+                # Find edit distance of the words (all in lowercase)
+                ed_list=sorted([(q_term,nltk.edit_distance(token, q_term.lower(), substitution_cost=2)) for q_term in poss_q_list], key=lambda x:x[1])
+                print(ed_list)
+                i=0
+                # Iterate through ed_list until an item that isn't in n_query is found
+                while ed_list[i][0] in n_query and i<len(ed_list):
+                    i+=1
+                #for the case when it reaches the final item in ed_list, and another confirmation that the word isn't inn_query
+                if ed_list[i][0] not in n_query:
+                    n_query.append(ed_list[i][0])
     return n_query
 
 
