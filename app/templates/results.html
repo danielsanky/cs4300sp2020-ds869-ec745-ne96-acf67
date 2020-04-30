@@ -29,37 +29,25 @@
         <div class="results-container">
             <h1 id="results-header">Here are our suggestions on what to do!</h1>
             <h2 id="music-results">Listen to One of these Songs</h2>
-            {% if song|length == 1 %}
-                <h4 class="music-rec">{{ song[0] }}</h4> <!-- What is this supposed to be? -->
-            {% else %}
-                {% for i in range(5) %}
-                    <h4 class="music-rec"><a href="{{ song[i]['url'] }}" target="_blank">{{ song[i]['title'] }} by {{ song[i]['artist'] }}</a></h4>
-                    <h4 class="music-sim">Similarity Score: {{ song[i]['score'] }}</h4>
-                {% endfor %}
-            {% endif %}
+            {% for song in songs[:5] %}
+                <h4 class="music-rec"><a href="{{ song['url'] }}" target="_blank">{{ song['title'] }} by {{ song['artist'] }}</a></h4>
+                <h4 class="music-sim">Similarity Score: {{ song['score'] }}</h4>
+            {% endfor %}
             <br/>
 
             <h2 id="movie-results">Watch One of these Movies</h2>
-            {% if movie|length == 1 %}
-                <h4 class="movie-rec">{{ movie[0] }}</h4>
-            {% else %}
-                {% for i in range(5) %}
-                    <h4 class="movie-rec"><a href="{{ movie[i]['url'] }}" target="_blank">{{ movie[i]['title'] }}</a></h4>
-                    <h4 class="movie-sim">Similarity Score: {{ movie[i]['score'] }}&#8194;|&#8194;Rating: {{ movie[i]['rating'] }}/10.0</h4>
-                {% endfor %}
-            {% endif %}
+            {% for movie in movies[:5] %}
+                <h4 class="movie-rec"><a href="{{ movie['url'] }}" target="_blank">{{ movie['title'] }}</a></h4>
+                <h4 class="movie-sim">Similarity Score: {{ movie['score'] }}&#8194;|&#8194;Rating: {{ movie['rating'] }}/10.0</h4>
+            {% endfor %}
             <br/>
 
 
             <h2 id="podcast-results">Listen to One of these Podcasts</h2>
-            {% if podcast|length == 1 %}
-                <h4 class="pod-rec">{{ podcast[0] }}</h4>
-            {% else %}
-                {% for i in range(5) %}
-                    <h4 class="pod-rec"><a href="{{ podcast[i]['url'] }}" target="_blank">{{ podcast[i]['title'] }}</a></h4>
-                    <h4 class="pod-sim">Similarity Score: {{ podcast[i]['score'] }}</h4></a>
-                {% endfor %}
-            {% endif %}
+            {% for podcast in podcasts[:5] %}
+                <h4 class="pod-rec"><a href="{{ podcast['url'] }}" target="_blank">{{ podcast['title'] }}</a></h4>
+                <h4 class="pod-sim">Similarity Score: {{ podcast['score'] }}</h4></a>
+            {% endfor %}
             <form action="/back/" method="POST" id="return-container">
                 <button id="back">Take Quiz Again</button>
             

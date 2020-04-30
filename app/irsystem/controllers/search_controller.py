@@ -64,7 +64,7 @@ def recommender():
     else:
         movie=["We can't recommend you a movie, since we don't know what genres you like!"]
 
-    return render_template('results.html', podcast=podcast, movie=movie, song=song, test=form_data)
+    return render_template('results.html', podcasts=podcast, movies=movie, songs=song, test=form_data)
 
 #load data
 resp = pd.read_csv("young-people-survey/responses.csv")
