@@ -23,27 +23,27 @@ def recommender():
     podcast_query = request.args.getlist("all-interests")
     movie_query = request.args.getlist("all-movies")
     music_query = request.args.getlist("all-music")
-    form_data = request.args.to_dict()
+    #form_data = request.args.to_dict()
 
     if music_query!=[]:
         mod_music_query=mod_query(music_query, music_qs)
-        song=recs(genre_to_music, mod_music_query, form_data)
+        song=recs(genre_to_music, mod_music_query)
         song=[{
-            'title': item[0],
-            'score': item[1],
-            'url': "https://open.spotify.com/embed/track/"+list(music.loc[music["track_name"] == item[0]]["track_id"].to_dict().values())[0],
-            'artist': list(music.loc[music["track_name"] == item[0]]["artist_name"].to_dict().values())[0]
+            'title': item[0][1],
+            'url': "https://open.spotify.com/embed/track/"+item[0][0],
+            'artist': item[0][3], 
+            'genre': item[0][2]
             } for item in song]
     else:
         song=[]
 
     if podcast_query!=[]:
         mod_podcast_query=mod_query(podcast_query, podcast_qs)
-        podcast=recs(final_dict, mod_podcast_query, form_data)
+        podcast=recs(final_dict, mod_podcast_query)
         podcast=[{
-            'title': item[0],
-            'score': item[1],
-            'url': list(podcasts.loc[podcasts["Name"] == item[0]]["Podcast URL"].to_dict().values())[0]
+            'title': item[0][0],
+            'description': item[0][1],
+            'url': item[0][2]
             } for item in podcast]
     else:
         podcast=[]
@@ -54,7 +54,7 @@ def recommender():
 
     if movie_query!=[]:
         mod_movie_query=mod_query(movie_query, movie_qs)
-        movie=recs(genre_to_movie, mod_movie_query, form_data)
+        movie=recs(genre_to_movie, mod_movie_query)
         movie=[{
             'title': item[0],
             'score': item[1],
@@ -64,13 +64,13 @@ def recommender():
     else:
         movie=[]
 
-    return render_template('results.html', podcasts=podcast, movies=movie, songs=song, test=form_data)
+    return render_template('results.html', podcasts=podcast, movies=movie, songs=song)
 
 #load data
 resp = pd.read_csv("young-people-survey/responses.csv")
 podcasts=pd.read_csv("young-people-survey/df_popular_podcasts.csv")
-word_exp=re.compile("([A-z])\w+")
-non_eng_pod=[index for index,value in enumerate(list(podcasts["Name"].to_dict().values())) if len(re.findall(word_exp,value))==0]
+word_exp=re.compile("[^\x00-\x7F]+")
+non_eng_pod=[index for index,value in enumerate(list(podcasts["Name"].to_dict().values())) if len(re.findall(word_exp,value))!=0]
 podcasts=podcasts.drop(non_eng_pod).drop_duplicates("Name", keep="first")
 
 movies=pd.read_csv("young-people-survey/MovieGenre.csv")
@@ -144,27 +144,27 @@ for i in range(len(music)):
     genre=music.iloc[i]['genre']
     genre=genre.lower()
     if genre in genre_to_music:
-            genre_to_music[genre].append(music.iloc[i]['track_name'])
+            genre_to_music[genre].append((music.iloc[i]['track_id'], music.iloc[i]['track_name'],  music.iloc[i]['genre'],  music.iloc[i]['artist_name']))
     else:
-            genre_to_music[genre]=[music.iloc[i]['track_name']]
+            genre_to_music[genre]=[(music.iloc[i]['track_id'], music.iloc[i]['track_name'],  music.iloc[i]['genre'],  music.iloc[i]['artist_name'])]
 
 
 #MAKE CORRELATION MATRIX
-music_resp=resp.iloc[:, :19]
-movie_resp=resp.iloc[:, 19:31]
-hobbies_resp=resp.iloc[:, 31:63]
-personality_resp=resp.iloc[:, [79, 80, 105, 106, 109, 110, 113, 129, 132]]
-demographics_resp=resp.iloc[:, [140, 144, 146, 147]]
+#music_resp=resp.iloc[:, :19]
+#movie_resp=resp.iloc[:, 19:31]
+#hobbies_resp=resp.iloc[:, 31:63]
+#personality_resp=resp.iloc[:, [79, 80, 105, 106, 109, 110, 113, 129, 132]]
+#demographics_resp=resp.iloc[:, [140, 144, 146, 147]]
 
-final_mat=pd.concat([music_resp, movie_resp, hobbies_resp, personality_resp, demographics_resp], axis=1)
-final_mat=final_mat.rename(columns={"New environment": "adapt", "Socializing": "meeting-people", "Waiting":"patient", "Number of friends": "friends", "Workaholism": "study", "Thinking ahead": "perspectives", "Charity": "charity", "Interests or hobbies": "differ-hobbies"})
+#final_mat=pd.concat([music_resp, movie_resp, hobbies_resp, personality_resp, demographics_resp], axis=1)
+#final_mat=final_mat.rename(columns={"New environment": "adapt", "Socializing": "meeting-people", "Waiting":"patient", "Number of friends": "friends", "Workaholism": "study", "Thinking ahead": "perspectives", "Charity": "charity", "Interests or hobbies": "differ-hobbies"})
 
-corr_mat=pd.DataFrame.corr(final_mat)
-corr_mat.columns = map(str.lower, corr_mat.columns)
-corr_mat.index = map(str.lower, corr_mat.index)
+#corr_mat=pd.DataFrame.corr(final_mat)
+#corr_mat.columns = map(str.lower, corr_mat.columns)
+#corr_mat.index = map(str.lower, corr_mat.index)
 
 
-def recs(genre_dict, genre_query, corr_query):
+def recs(genre_dict, genre_query):
     """Returns a list of recommendations based on interests user clicked in form
     Params: {query: list of genre names, genre_dict: dictionary that maps genre to titles, corr_dict: maps personality questions to answers given in survey}
     Returns: list of tuples containing titles and scores
@@ -172,42 +172,44 @@ def recs(genre_dict, genre_query, corr_query):
 
     #query is an array of genre_names
     #corr_query is a dictionary of radio button responses like {'all-music': 'R&B', 'all-movies': 'Horror', 'all-interests': 'Social Sciences', 'gender': 'female', 'education': 'no'}
-    if 'all-interests' in corr_query:
-        corr_query.pop('all-interests', None)
-    if 'all-movies' in corr_query:
-        corr_query.pop('all-movies', None)
-    if 'all-music' in corr_query:
-        corr_query.pop('all-music', None)
-    if not corr_query: #check if empty
-        corr_query={'charity': '3', 'adapt': '3', 'meeting-people': '3', 'patient': '3', 'friends': '3', 'study': '3', 'perspectives': '3', 'differ-hobbies': '3' }
+    #if 'all-interests' in corr_query:
+    #    corr_query.pop('all-interests', None)
+    #if 'all-movies' in corr_query:
+    #    corr_query.pop('all-movies', None)
+    #if 'all-music' in corr_query:
+    #    corr_query.pop('all-music', None)
+    #if not corr_query: #check if empty
+    #    corr_query={'charity': '3', 'adapt': '3', 'meeting-people': '3', 'patient': '3', 'friends': '3', 'study': '3', 'perspectives': '3', 'differ-hobbies': '3' }
 
     genre_query=[genre.lower() for genre in genre_query]
 
     counter={}
-    for key in corr_query:
-        val=float(corr_query[key])
-        if val > 3.0:
-            val = val - 3
-        elif val == 3.0:
-            val = 1
-        elif val < 3.0:
-            val = val* - 1
-        for cat in genre_query:
-            corr=float(corr_mat[key][cat])
-            weighted=corr*val
-            for film in genre_dict[cat]:
-                if film in counter:
-                    counter[film]+=weighted
-                else:
-                    counter[film]=weighted
+    #for key in corr_query:
+    #    val=float(corr_query[key])
+    #    if val > 3.0:
+    #        val = val - 3
+    #    elif val == 3.0:
+    #        val = 1
+    #    elif val < 3.0:
+    #        val = val* - 1
+    for cat in genre_query:
+        #corr=float(corr_mat[key][cat])
+        #weighted=corr*val
+        for film in genre_dict[cat]:
+            if film in counter:
+                counter[film]+=1
+            else:
+                counter[film]=1
 
     results = list(counter.items())
     random.shuffle(results)
     results.sort(key=lambda x: x[1], reverse=True)
     highest_score=results[0][1]
 
-    output=[]
-    for result in results[:5]:
-        output.append((result[0], result[1]/highest_score))
+    #output=[]
+    #for result in results[:5]:
+    #    output.append((result[0], result[1]/highest_score))
 
-    return output
+    return results[:5]
+
+
