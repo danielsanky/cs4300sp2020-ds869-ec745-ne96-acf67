@@ -231,3 +231,29 @@ def podcast_recs(query):
     for x in range(5):
         result.append(get_max_val(matrix_slice))
     return result
+
+def music_recs(val_pref, energy_pref, dance_pref):
+    # Subscore functions
+    subscore_fn = {
+        'HIGH': lambda x: x,
+        'MID': lambda x: 4 * x * (1 - x),
+        'LOW': lambda x: 1 - x
+    }
+    # Subscores
+    val_subscore = music['valence'].apply(subscore_fn[val_pref])
+    energy_subscore = music['energy'].apply(subscore_fn[energy_pref])
+    dance_subscore = music['danceability'].apply(subscore_fn[dance_pref])
+    # Total
+    score = val_subscore + energy_subscore + dance_subscore
+    # Return top 5 songs with metadata and attributes, sorted by score
+    results = pd.DataFrame({
+        'track_id': music['track_id'],
+        'title': music['track_name'],
+        'artist': music['artist_name'],
+        'valence': music['valence'],
+        'energy': music['energy'],
+        'danceability': music['danceability'],
+        'score': score
+    })
+    results.sort_values('score', ascending=False, inplace=True)
+    return results[:5]
