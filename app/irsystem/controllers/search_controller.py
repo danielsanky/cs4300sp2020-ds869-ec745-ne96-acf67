@@ -32,19 +32,18 @@ def recommender():
         song=[{
             'title': item[0][1],
             'url': "https://open.spotify.com/embed/track/"+item[0][0],
-            'artist': item[0][3], 
+            'artist': item[0][3],
             'genre': item[0][2]
             } for item in song]
     else:
         song=[]
 
     if podcast_query!=[]:
-       # mod_podcast_query=mod_query(podcast_query, podcast_qs)
         podcast=podcast_recs(podcast_query)
         podcast=[{
             'title': item[0],
             'description': item[1],
-            'url': item[2], 
+            'url': item[2],
             'score': item[3]
             } for item in podcast]
     else:
@@ -55,8 +54,7 @@ def recommender():
         return "https://www.imdb.com/title/tt{0}/".format(s.zfill(7))
 
     if movie_query!=[]:
-        mod_movie_query=mod_query(movie_query, movie_qs)
-        movie=recs(genre_to_movie, mod_movie_query)
+        movie=recs(genre_to_movie, movie_query)
         movie=[{
             'title': item[0],
             'score': item[1],
@@ -75,9 +73,10 @@ word_exp=re.compile("[^\x00-\x7F]+")
 non_eng_pod=[index for index,value in enumerate(list(podcasts["Name"].to_dict().values())) if len(re.findall(word_exp,value))!=0]
 podcasts=podcasts.drop(non_eng_pod).drop_duplicates("Name", keep="first")
 
-movies=pd.read_csv("young-people-survey/MovieGenre.csv")
-movies=movies.drop_duplicates("imdbId")
-movies=movies[movies["IMDB Score"].astype(float)>float(5.0)]
+titles=pd.read_csv("young-people-survey/netflix_titles.csv")
+movies=titles[titles["type"]=="Movie"]
+shows=titles[titles["type"]=="TV Show"]
+
 
 music=pd.read_csv("young-people-survey/SpotifyFeatures.csv")
 music=music.drop_duplicates("track_id")
@@ -86,10 +85,8 @@ music=music[music["popularity"].astype(float)>float(50)]
 genre_IDs=[['1311', 'News & Politics'], ['26', 'Podcasts'], ['1479', 'Social Sciences'], ['1315', 'Science & Medicine'], ['1324', 'Society & Culture'], ['1302', 'Personal Journals'], ['1469', 'Language Courses'], ['1304', 'Education'], ['1320', 'Places & Travel'], ['1416', 'Higher Education'], ['1465', 'Professional'], ['1316', 'Sports & Recreation'], ['1303', 'Comedy'], ['1305', 'Kids & Family'], ['1439', 'Christianity'], ['1314', 'Religion & Spirituality'], ['1444', 'Spirituality'], ['1309', 'TV & Film'], ['1462', 'History'], ['1310', 'Music'], ['1478', 'Medicine'], ['1321', 'Business'], ['1412', 'Investing'], ['1420', 'Self-Help'], ['1307', 'Health'], ['1481', 'Alternative Health'], ['1417', 'Fitness & Nutrition'], ['1467', 'Amateur'], ['1480', 'Software How-To'], ['1318', 'Technology'], ['1448', 'Tech News'], ['1456', 'Outdoor'], ['1477', 'Natural Sciences'], ['1301', 'Arts'], ['1454', 'Automotive'], ['1323', 'Games & Hobbies'], ['1438', 'Buddhism'], ['1443', 'Philosophy'], ['1401', 'Literature'], ['1402', 'Design'], ['1410', 'Careers'], ['1470', 'Training'], ['1413', 'Management & Marketing'], ['1306', 'Food'], ['1406', 'Visual Arts'], ['1446', 'Gadgets'], ['1468', 'Educational Technology'], ['1405', 'Performing Arts'], ['1460', 'Hobbies'], ['1471', 'Business News'], ['1404', 'Video Games'], ['1450', 'Podcasting'], ['1473', 'National'], ['1325', 'Government & Organizations'], ['1461', 'Other Games'], ['1466', 'College & High School'], ['1459', 'Fashion & Beauty'], ['1476', 'Non-Profit'], ['1415', 'K-12'], ['1455', 'Aviation'], ['1464', 'Other'], ['1421', 'Sexuality'], ['1472', 'Shopping'], ['1475', 'Local'], ['1441', 'Judaism'], ['1440', 'Islam'], ['1474', 'Regional'], ['1463', 'Hinduism']]
 
 
-# Created lists of all the current query inputs in the form
-music_qs=["Dance", "Folk", "Country", "Classical","Pop", "Rock","Reggae","Alternative","Electronic","Opera"]
-movie_qs=["Horror","Thriller","Comedy","Romance","Sci-Fi","War","Fantasy","Documentary","Western","Action"]
-podcast_qs=["News & Politics","Science & Medicine","Sports & Recreation","Religion & Spirituality","History","Music","Business"]
+music_qs=list(Counter(list(music["genre"].to_dict().values())).keys())
+del music_qs[12]
 
 
 def mod_query(query, poss_q_list):
@@ -219,7 +216,7 @@ def cosine_sim(corpus):
     similarity = tfidf * tfidf.T
     return similarity.toarray()
 
-def get_max_val(np_array): 
+def get_max_val(np_array):
     index_max_val=np.argmax(np_array)
     output=(podcasts.iloc[index_max_val][:]["Name"], podcasts.iloc[index_max_val][:]["Description"], podcasts.iloc[index_max_val][:]["Podcast URL"], np_array[index_max_val])
     np_array[index_max_val]=0
@@ -234,4 +231,3 @@ def podcast_recs(query):
     for x in range(5):
         result.append(get_max_val(matrix_slice))
     return result
-
