@@ -3,7 +3,8 @@ from app.irsystem.models.helpers import *
 from app.irsystem.models.helpers import NumpyEncoder as NumpyEncoder
 import numpy as np
 import pandas as pd
-import collections
+import collections 
+from collections import Counter 
 import random
 import nltk
 import re
@@ -73,9 +74,9 @@ word_exp=re.compile("[^\x00-\x7F]+")
 non_eng_pod=[index for index,value in enumerate(list(podcasts["Name"].to_dict().values())) if len(re.findall(word_exp,value))!=0]
 podcasts=podcasts.drop(non_eng_pod).drop_duplicates("Name", keep="first")
 
-titles=pd.read_csv("young-people-survey/netflix_titles.csv")
-movies=titles[titles["type"]=="Movie"]
-shows=titles[titles["type"]=="TV Show"]
+movies=pd.read_csv("young-people-survey/MovieGenre.csv")
+#movies=titles[titles["type"]=="Movie"]
+#shows=titles[titles["type"]=="TV Show"]
 
 
 music=pd.read_csv("young-people-survey/SpotifyFeatures.csv")
