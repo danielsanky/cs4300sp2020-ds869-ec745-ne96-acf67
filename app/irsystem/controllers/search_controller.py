@@ -7,6 +7,7 @@ import collections
 import random
 import nltk
 import re
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 @irsystem.route('/', methods=['GET'])
 def start():
@@ -20,7 +21,7 @@ def back():
 @irsystem.route('/submit/', methods=['POST', 'GET'])
 def recommender():
 
-    podcast_query = request.args.getlist("all-interests")
+    podcast_query = request.args.get("interests")
     movie_query = request.args.getlist("all-movies")
     music_query = request.args.getlist("all-music")
     #form_data = request.args.to_dict()
@@ -38,12 +39,13 @@ def recommender():
         song=[]
 
     if podcast_query!=[]:
-        mod_podcast_query=mod_query(podcast_query, podcast_qs)
-        podcast=recs(final_dict, mod_podcast_query)
+       # mod_podcast_query=mod_query(podcast_query, podcast_qs)
+        podcast=podcast_recs(podcast_query)
         podcast=[{
-            'title': item[0][0],
-            'description': item[0][1],
-            'url': item[0][2]
+            'title': item[0],
+            'description': item[1],
+            'url': item[2], 
+            'score': item[3]
             } for item in podcast]
     else:
         podcast=[]
@@ -122,8 +124,7 @@ for item in podcasts.index:
     array=podcasts["Genre IDs"][item][1:-1].split(',')
     array=[int(array[i].replace('\'', '').strip('\'')) for i in range(len(array))]
     for j in range(len(array)):
-        genre_to_podcast[array[j]].append(podcasts["Name"][item])
-#final_dict={key.lower():value for key,value in final_dict}
+        genre_to_podcast[array[j]].append((podcasts["Name"][item], podcasts["Description"][item], podcasts["Podcast URL"][item]))
 final_dict={list(dict_pod.values())[p]:list(genre_to_podcast.values())[p] for p in range(len(genre_to_podcast.keys()))}
 final_dict = dict((k.lower(), v) for k, v in final_dict.items())
 
@@ -204,12 +205,33 @@ def recs(genre_dict, genre_query):
     results = list(counter.items())
     random.shuffle(results)
     results.sort(key=lambda x: x[1], reverse=True)
-    highest_score=results[0][1]
-
+    #highest_score=results[0][1]
     #output=[]
     #for result in results[:5]:
     #    output.append((result[0], result[1]/highest_score))
 
     return results[:5]
 
+
+def cosine_sim(corpus):
+    vectorizer=TfidfVectorizer(stop_words="english", min_df=1)
+    tfidf = vectorizer.fit_transform(corpus)
+    similarity = tfidf * tfidf.T
+    return similarity.toarray()
+
+def get_max_val(np_array): 
+    index_max_val=np.argmax(np_array)
+    output=(podcasts.iloc[index_max_val][:]["Name"], podcasts.iloc[index_max_val][:]["Description"], podcasts.iloc[index_max_val][:]["Podcast URL"], np_array[index_max_val])
+    np_array[index_max_val]=0
+    return output
+
+def podcast_recs(query):
+    descriptions=list(podcasts['Description'])
+    corpus=[query]+descriptions
+    matrix=cosine_sim(corpus)
+    matrix_slice=matrix[:][0][1:]
+    result=[]
+    for x in range(5):
+        result.append(get_max_val(matrix_slice))
+    return result
 

@@ -55,7 +55,8 @@
             {% if podcasts|length > 0 %}
                 {% for podcast in podcasts[:5] %}
                     <h4 class="pod-rec"><a href="{{ podcast['url'] }}" target="_blank">{{ podcast['title'] }}</a></h4>
-                    <h4 class="pod-sim">Similarity Score: {{ podcast['score'] }}</h4></a>
+                    <h4 class="pod-sim">Description: {{ podcast['description'] }}</h4>
+                    <h4 class="pod-sim">Similarity Score: {{ podcast['score'] }}</h4>
                 {% endfor %}
             {% else %}
                 <h4 class="pod-rec">We can't recommend you a podcast, since we don't know your interests!</h4>
