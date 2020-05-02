@@ -86,7 +86,6 @@ genre_IDs=[['1311', 'News & Politics'], ['26', 'Podcasts'], ['1479', 'Social Sci
 
 
 music_qs=list(Counter(list(music["genre"].to_dict().values())).keys())
-del music_qs[12]
 
 
 def mod_query(query, poss_q_list):
