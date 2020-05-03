@@ -27,10 +27,11 @@ def recommender():
     energy=request.args.get("energy")
     danceability=request.args.get("danceability")
 
-    #if music_query!=[]:
-        #mod_music_query=mod_query(music_query, music_qs)
-    song=music_recs(valence, energy, danceability, genres)
-    song=[{
+    if genres!=[]:
+        mod_music_query=mod_query(genres, music_qs)
+    if valence or danceability or energy: 
+        song=music_recs(valence, energy, danceability, genres)
+        song=[{
             'title': item[1],
             'artist': item[2],
             'url': "https://open.spotify.com/embed/track/"+item[0],
