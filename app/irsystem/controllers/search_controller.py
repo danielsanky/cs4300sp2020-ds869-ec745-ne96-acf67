@@ -22,19 +22,20 @@ def back():
 def recommender():
     interests_query = request.args.get("interests")
     #movie_query = request.args.getlist("all-movies")
-    #music_query = request.args.getlist("all-music")
+    genres = request.args.getlist("all-music")
     valence=request.args.get("valence")
     energy=request.args.get("energy")
     danceability=request.args.get("danceability")
 
     #if music_query!=[]:
         #mod_music_query=mod_query(music_query, music_qs)
-    song=music_recs(valence, energy, danceability)
+    song=music_recs(valence, energy, danceability, genres)
     song=[{
             'title': item[1],
             'artist': item[2],
             'url': "https://open.spotify.com/embed/track/"+item[0],
-            'score': item[6]
+            'genre': item[6], 
+            'score': item[7]
             } for item in song]
     #else:
     #    song=[]
@@ -58,6 +59,7 @@ def recommender():
             'url': item[3], 
             'num_revs': item[2],
             'rating': item[4],
+            #'genre': item[5],
             'score': item[5]
             } for item in movie]
         else:
