@@ -14,10 +14,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 def start():
     return render_template('index.html')
 
-@irsystem.route('/back/', methods=['POST'])
-def back():
-    return render_template('index.html')
-
 @irsystem.route('/submit/', methods=['POST', 'GET'])
 def recommender():
     interests_query = request.args.get("interests")
