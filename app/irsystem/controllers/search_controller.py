@@ -23,15 +23,27 @@ def recommender():
     interests_query = request.args.get("interests")
     #movie_query = request.args.getlist("all-movies")
     genres = request.args.getlist("all-music")
-    valence=request.args.get("valence")
-    energy=request.args.get("energy")
-    danceability=request.args.get("danceability")
+    if request.args.get("valence"):
+        valence=request.args.get("valence")
+    else:
+        valence='DONT CARE'
+
+    if request.args.get("danceability"):
+        danceability=request.args.get("danceability")
+    else:
+        danceability='DONT CARE'
+
+    if request.args.get("energy"):
+        energy=request.args.get("energy")
+    else:
+        energy='DONT CARE'
 
     if genres!=[]:
         mod_music_query=mod_query(genres, music_qs)
-    if valence or danceability or energy: 
         song=music_recs(valence, energy, danceability, genres)
-        song=[{
+    else: 
+        song=music_recs(valence, energy, danceability)
+    song=[{
             'title': item[1],
             'artist': item[2],
             'url': "https://open.spotify.com/embed/track/"+item[0],
