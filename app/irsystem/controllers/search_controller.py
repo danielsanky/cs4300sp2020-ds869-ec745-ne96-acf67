@@ -176,14 +176,18 @@ def music_recs(val_pref, energy_pref, dance_pref):
     subscore_fn = {
         'HIGH': lambda x: x,
         'MID': lambda x: 4 * x * (1 - x),
-        'LOW': lambda x: 1 - x
+        'LOW': lambda x: 1 - x,
+        'DONT CARE': lambda x: 0.5
     }
     # Subscores
     val_subscore = music['valence'].apply(subscore_fn[val_pref])
     energy_subscore = music['energy'].apply(subscore_fn[energy_pref])
     dance_subscore = music['danceability'].apply(subscore_fn[dance_pref])
+    # Weights
+    w_val, w_energy, w_dance = 1, 1, 1
     # Total
-    score = val_subscore + energy_subscore + dance_subscore
+    score = (w_val * val_subscore + w_energy * energy_subscore + w_dance * dance_subscore) \
+        / (w_val + w_energy + w_dance)
     # Return top 5 songs with metadata and attributes, sorted by score
     results = pd.DataFrame({
         'track_id': music['track_id'],
@@ -192,6 +196,7 @@ def music_recs(val_pref, energy_pref, dance_pref):
         'valence': music['valence'],
         'energy': music['energy'],
         'danceability': music['danceability'],
+        'genre': music['genre'],
         'score': score
     })
     results.sort_values('score', ascending=False, inplace=True)
