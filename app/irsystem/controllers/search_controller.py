@@ -171,7 +171,13 @@ def movie_recs(query):
     return result
 
 
-def music_recs(val_pref, energy_pref, dance_pref):
+def music_recs(val_pref, energy_pref, dance_pref, genres=None):
+    # 1. Filter by genres (None means no filtering)
+    if genres is None:
+        music_filtered = music
+    else:
+        music_filtered = music[music.apply(lambda x: x['genre'] in genres, axis=1)]
+    # 2. Compute relevance scores
     # Subscore functions
     subscore_fn = {
         'HIGH': lambda x: x,
@@ -180,25 +186,27 @@ def music_recs(val_pref, energy_pref, dance_pref):
         'DONT CARE': lambda x: 0.5
     }
     # Subscores
-    val_subscore = music['valence'].apply(subscore_fn[val_pref])
-    energy_subscore = music['energy'].apply(subscore_fn[energy_pref])
-    dance_subscore = music['danceability'].apply(subscore_fn[dance_pref])
+    val_subscore = music_filtered['valence'].apply(subscore_fn[val_pref])
+    energy_subscore = music_filtered['energy'].apply(subscore_fn[energy_pref])
+    dance_subscore = music_filtered['danceability'].apply(subscore_fn[dance_pref])
     # Weights
     w_val, w_energy, w_dance = 1, 1, 1
-    # Total
+    # Total score
     score = (w_val * val_subscore + w_energy * energy_subscore + w_dance * dance_subscore) \
         / (w_val + w_energy + w_dance)
-    # Return top 5 songs with metadata and attributes, sorted by score
     results = pd.DataFrame({
-        'track_id': music['track_id'],
-        'title': music['track_name'],
-        'artist': music['artist_name'],
-        'valence': music['valence'],
-        'energy': music['energy'],
-        'danceability': music['danceability'],
-        'genre': music['genre'],
+        'track_id': music_filtered['track_id'],
+        'title': music_filtered['track_name'],
+        'artist': music_filtered['artist_name'],
+        'valence': music_filtered['valence'],
+        'energy': music_filtered['energy'],
+        'danceability': music_filtered['danceability'],
+        'genre': music_filtered['genre'],
         'score': score
     })
+    # 3. Shuffle
+    results = results.sample(frac=1).reset_index(drop=True)
+    # 4. Sort descending by score
     results.sort_values('score', ascending=False, inplace=True)
     results=[tuple(r) for r in results.to_numpy()]
     return results[:5]
