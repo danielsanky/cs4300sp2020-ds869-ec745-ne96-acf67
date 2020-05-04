@@ -77,13 +77,21 @@ h3 {
     font-size: 25px;
 }
 
+.subquestion {
+    font-size: 22px;
+}
+
 .music-rec, .pod-rec, .movie-rec {
     margin-bottom: 0;
 }
 
 .pod-sim, .music-sim, .movie-sim {
-    color: rgb(6, 105, 109);
+    color: rgb(0, 72, 75);
     margin: 5px;
+}
+
+#pod-desc {
+    color: rgb(0, 12, 66)
 }
 
 #music-header {
@@ -157,12 +165,16 @@ hr {
     margin-bottom: 50px;
 }
 
+#back {
+    margin-top: 50px;
+}
+
 #submit:hover, #back:hover, #submit:active, #back:active {
     box-shadow: 1px 2px rgba(0, 0, 0, 0.315);
 }
 
 #content, .results-container {
-    background-color:rgba(255, 255, 255, 0.74);
+    background-color:rgba(255, 255, 255, 0.788);
     padding-top: 2px;
     width: 50%;
     margin: 0 auto;
@@ -206,6 +218,16 @@ a {
 
 #return-container {
     margin-top: 30px;
+}
+
+#interests {
+    height: 35px;
+    border-radius: 5px;
+    outline: none;
+    padding: 5px;
+    font-family: 'Raleway', sans-serif;
+    font-size: 20px;
+
 }
 
 /* https://projects.lukehaas.me/css-loaders/ */

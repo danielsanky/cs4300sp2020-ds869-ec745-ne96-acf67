@@ -12,13 +12,19 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 @irsystem.route('/', methods=['GET'])
 def start():
-    return render_template('index.html')
+    i = session.get("interests",'')
+    g = session.get("genres",[])
+    v = session.get("valence",'')
+    d = session.get("danceability",'')
+    e = session.get("energy",'')
+    return render_template('index.html',interests=i, genres=g, valence=v, danceability=d, energy=e)
 
 @irsystem.route('/submit/', methods=['POST', 'GET'])
 def recommender():
     interests_query = request.args.get("interests")
     #movie_query = request.args.getlist("all-movies")
     genres = request.args.getlist("all-music")
+    print(genres)
     if request.args.get("valence"):
         valence=request.args.get("valence")
     else:
@@ -78,6 +84,11 @@ def recommender():
         podcast=[]
         movie=[]
 
+    session["interests"] = interests_query
+    session["genres"] = genres
+    session["valence"] = valence
+    session["danceability"] = danceability
+    session["energy"] = energy
     # def movie_url(imdbid):
     #     s = str(imdbid)
     #     return "https://www.imdb.com/title/tt{0}/".format(s.zfill(7))

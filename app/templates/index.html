@@ -7,10 +7,29 @@
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
   <script src="/static/js/select2.min.js"></script>
   <script>
+  
+  var inter = {{interests|tojson}}
+  var genres = {{genres|tojson}}
+  var valence = {{valence|tojson}}
+  var energy = {{energy|tojson}}
+  var danceability = {{danceability|tojson}}
+
+  $(window).on('reload',function(){
+    $('.questionnaire').trigger("reset");
+  });
+
   $(window).on('load', function(){
     setTimeout(removeLoader, 1000); //wait for page load PLUS 1 second
     setTimeout(callselect, 1000);
     setTimeout(showoverflow, 1000);
+    $('#interests').val(inter);
+    $('#music-q').val(genres);
+    var v = 'input[name="valence"][value="'.concat(valence).concat('"]');
+    $(v).prop("checked", true);
+    var e = 'input[name="energy"][value="'.concat(energy).concat('"]');
+    $(e).prop("checked", true);
+    var d = 'input[name="danceability"][value="'.concat(danceability).concat('"]');
+    $(d).prop("checked", true);
   });
 
   function showoverflow(){
@@ -18,17 +37,14 @@
   }
   function callselect(){
     $('.js-example-basic-multiple').select2({
-      placeholder: "e.g. Classical",
       minimumInputLength: 1,
       tags: true
     });
     $('.js-example-basic-multiple2').select2({
-      placeholder: "e.g. Horror",
       minimumInputLength: 1,
       tags: true
     });
     $('.js-example-basic-multiple3').select2({
-      placeholder: "e.g. I love cooking",
       minimumInputLength: 1,
       tags: true
     });
@@ -56,7 +72,7 @@
     <form class="questionnaire" action="/submit/" method="GET">
       <div id="music-container" class="feature">
         <h3>What music genres do you like?</h3>
-        <select class="js-example-basic-multiple" name="all-music" multiple="multiple" style="width: 40%; padding: 100%;">
+        <select class="js-example-basic-multiple" name="all-music" multiple="multiple" id="music-q" style="width: 40%; padding: 100%;" value={{genres}}>
           <option id="dance" name="music-genre" value="Dance">Dance</option>
           <option id="folk" name="music-genre" value="Folk">Folk</option>
           <option id="country" name="music-genre" value="Country">Country</option>
@@ -86,19 +102,19 @@
       </div>
 
 
-      <div id="" class="feature">
+      <div id="feature-container" class="feature">
         <h3>How do you prefer your songs with respect to the following:</h3>
-        <h3>Valence?</h3>
+        <h3 class="subquestion">Valence?</h3>
         <div class="radio-container">
-          <input type="radio" class="perspectives" name="valence" value="LOW">
+          <input type="radio" class="perspectives" name="valence" id="VLOW" value="LOW">
           <label class="radio">Low</label>
-          <input type="radio" class="perspectives" name="valence" value="MID">
+          <input type="radio" class="perspectives" name="valence" id="VMID" value="MID">
           <label class="radio">Medium</label>
-          <input type="radio" class="perspectives" name="valence" value="HIGH">
+          <input type="radio" class="perspectives" name="valence" id="VHIGH" value="HIGH">
           <label class="radio">High</label>
         </div>
 
-        <h3>Energy?</h3>
+        <h3 class="subquestion">Energy?</h3>
         <div class="radio-container">
           <input type="radio" class="perspectives" name="energy" value="LOW">
           <label class="radio">Low</label>
@@ -108,7 +124,7 @@
           <label class="radio">High</label>
         </div>
 
-        <h3>Danceability?</h3>
+        <h3 class="subquestion">Danceability?</h3>
         <div class="radio-container">
           <input type="radio" class="perspectives" name="danceability" value="LOW">
           <label class="radio">Low</label>
@@ -141,7 +157,7 @@
 
       <div id="hobbies" class="feature">
         <h3>Write something about your current mood or interests. </h3>
-        <input type="search" class="select2" name="interests" placeholder="e.g. cooking" style="width: 40%;">
+        <input type="search" class="select2" name="interests" id="interests" style="width: 40%;" value={{interests}}>
         <!-- <select class="js-example-basic-multiple3" multiple="multiple" name="interests" value="interests" style="width: 40%;">
           <option id="News & Politics" name="interests" value="News & Politics">News & Politics</option>
           <option id="Science & Medicine" name="interests" value="Science & Medicine">Science & Medicine</option> <option id="Social Sciences" name="interests" value="Social Sciences">Social Sciences</option>
