@@ -17,28 +17,34 @@ def start():
 @irsystem.route('/submit/', methods=['POST', 'GET'])
 def recommender():
     interests_query = request.args.get("interests")
-    #movie_query = request.args.getlist("all-movies")
-    genres = request.args.getlist("all-music")
+    movie_genres = request.args.getlist("all-movies")
+    song_genres = request.args.getlist("all-music")
+
+    #SONGS
+    #valence
     if request.args.get("valence"):
         valence=request.args.get("valence")
     else:
         valence='DONT CARE'
-
+    #danceability
     if request.args.get("danceability"):
         danceability=request.args.get("danceability")
     else:
         danceability='DONT CARE'
-
+    #energy
     if request.args.get("energy"):
         energy=request.args.get("energy")
     else:
         energy='DONT CARE'
 
-    if genres!=[]:
-        mod_music_query=mod_query(genres, music_qs)
-        song=music_recs(valence, energy, danceability, genres)
+    #factor in optional genres
+    if song_genres!=[]:
+        mod_music_query=mod_query(song_genres, music_qs)
+        song=music_recs(valence, energy, danceability, mod_music_query)
     else: 
         song=music_recs(valence, energy, danceability)
+
+    #get ready to display
     song=[{
             'title': item[1],
             'artist': item[2],
@@ -46,12 +52,12 @@ def recommender():
             'genre': item[6], 
             'score': item[7]
             } for item in song]
-    #else:
-    #    song=[]
 
+
+    #PODCASTS AND MOVIES
     if type(interests_query)==str:
         podcast=podcast_recs(interests_query)
-        if podcast[0]!=():
+        if podcast[0]: 
              podcast=[{
             'title': item[0],
             'description': item[1],
@@ -60,8 +66,14 @@ def recommender():
             } for item in podcast]
         else:
             podcast=[]
-        movie=movie_recs(interests_query)
-        if movie[0]!=():
+
+        if movie_genres!=[]:
+            mod_movie_query=mod_query(movie_genres, movie_qs)
+            movie=movie_recs(interests_query,mod_movie_query)
+        else:
+            movie=movie_recs(interests_query)
+    
+        if movie[0]: 
             movie=[{
             'title': item[0],
             'year': item[1],
@@ -78,21 +90,6 @@ def recommender():
         podcast=[]
         movie=[]
 
-    # def movie_url(imdbid):
-    #     s = str(imdbid)
-    #     return "https://www.imdb.com/title/tt{0}/".format(s.zfill(7))
-
-    # if movie_query!=[]:
-    #     movie=recs(genre_to_movie, movie_query)
-    #     movie=[{
-    #         'title': item[0],
-    #         'score': item[1],
-    #         'url': movie_url(list(movies.loc[movies["Title"] == item[0]]["imdbId"].to_dict().values())[0]),
-    #         'rating': list(movies.loc[movies["Title"] == item[0]]["IMDB Score"].to_dict().values())[0]
-    #         } for item in movie]
-    # else:
-    #     movie=[]
-
     return render_template('results.html', podcasts=podcast, movies=movie, songs=song)
 
 #load data
@@ -108,11 +105,9 @@ movies=movies.dropna().drop_duplicates("movie_imdb_link", keep="first")
 
 music=pd.read_csv("young-people-survey/SpotifyFeatures.csv")
 music=music.drop_duplicates("track_id")
-music=music[music["popularity"].astype(float)>float(50)]
-
-genre_IDs=[['1311', 'News & Politics'], ['26', 'Podcasts'], ['1479', 'Social Sciences'], ['1315', 'Science & Medicine'], ['1324', 'Society & Culture'], ['1302', 'Personal Journals'], ['1469', 'Language Courses'], ['1304', 'Education'], ['1320', 'Places & Travel'], ['1416', 'Higher Education'], ['1465', 'Professional'], ['1316', 'Sports & Recreation'], ['1303', 'Comedy'], ['1305', 'Kids & Family'], ['1439', 'Christianity'], ['1314', 'Religion & Spirituality'], ['1444', 'Spirituality'], ['1309', 'TV & Film'], ['1462', 'History'], ['1310', 'Music'], ['1478', 'Medicine'], ['1321', 'Business'], ['1412', 'Investing'], ['1420', 'Self-Help'], ['1307', 'Health'], ['1481', 'Alternative Health'], ['1417', 'Fitness & Nutrition'], ['1467', 'Amateur'], ['1480', 'Software How-To'], ['1318', 'Technology'], ['1448', 'Tech News'], ['1456', 'Outdoor'], ['1477', 'Natural Sciences'], ['1301', 'Arts'], ['1454', 'Automotive'], ['1323', 'Games & Hobbies'], ['1438', 'Buddhism'], ['1443', 'Philosophy'], ['1401', 'Literature'], ['1402', 'Design'], ['1410', 'Careers'], ['1470', 'Training'], ['1413', 'Management & Marketing'], ['1306', 'Food'], ['1406', 'Visual Arts'], ['1446', 'Gadgets'], ['1468', 'Educational Technology'], ['1405', 'Performing Arts'], ['1460', 'Hobbies'], ['1471', 'Business News'], ['1404', 'Video Games'], ['1450', 'Podcasting'], ['1473', 'National'], ['1325', 'Government & Organizations'], ['1461', 'Other Games'], ['1466', 'College & High School'], ['1459', 'Fashion & Beauty'], ['1476', 'Non-Profit'], ['1415', 'K-12'], ['1455', 'Aviation'], ['1464', 'Other'], ['1421', 'Sexuality'], ['1472', 'Shopping'], ['1475', 'Local'], ['1441', 'Judaism'], ['1440', 'Islam'], ['1474', 'Regional'], ['1463', 'Hinduism']]
 
 music_qs=list(Counter(list(music["genre"].to_dict().values())).keys())
+movie_qs=['Horror', 'Biography', 'War', 'Western', 'Comedy', 'Sport', 'History', 'Musical', 'Family', 'Action', 'Animation', 'Adventure', 'Sci-Fi','Fantasy', 'Trhiller', 'Romance', 'Drama', 'Crime', 'Mystery', 'Documentary' ]
 def mod_query(query, poss_q_list):
     n_query=[]
     for item in query:
@@ -206,7 +201,7 @@ def music_recs(val_pref, energy_pref, dance_pref, genres=None):
     # Weights
     w_val, w_energy, w_dance = 1, 1, 1
     # Total score
-    score = (w_val * val_subscore + w_energy * energy_subscore + w_dance * dance_subscore) \
+    score = (w_val * val_subscore + w_energy * energy_subscore + w_dan ce * dance_subscore) \
         / (w_val + w_energy + w_dance)
     results = pd.DataFrame({
         'track_id': music_filtered['track_id'],
