@@ -7,7 +7,12 @@
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
   <script src="/static/js/select2.min.js"></script>
   <script>
-  
+
+
+  var all_music = ['Dance','Folk','Country','Classical','Musicals','Pop','Rock','Metal','Punk','Hip-Hop','R&B','Reggae','Swing',"Rock 'n Roll",
+  'Alternative','Electronic','Opera','Anime','Blues','Rap','Indie','Jazz','Soul','World','Soundtracks']
+  var all_movie = ['Horror','Biography','War','Western','Comedy','Sports','History','Musical','Family','Action','Sci-Fi','Fantasy','Thriller','Romance',
+  'Drama','Crime','Mystery','Documentary']
   var inter = {{interests|tojson}}
   var movie_genres = {{movie_genres|tojson}}
   var song_genres={{song_genres|tojson}}
@@ -23,6 +28,20 @@
     setTimeout(removeLoader, 1000); //wait for page load PLUS 1 second
     setTimeout(callselect, 1000);
     setTimeout(showoverflow, 1000);
+    var x;
+    var y;
+    for(x = 0; x < song_genres.length; x++) {
+      var el = song_genres[x];
+      if(all_music.includes(el) == false) {
+        $('#music-q').append('<option value="'+ el + '">' + el + '</option>');
+      } 
+    }
+    for(y = 0; y < movie_genres.length; y++) {
+      var ele = movie_genres[y];
+      if(all_movie.includes(ele) == false) {
+        $('#movie-q').append('<option value="'+ ele + '">' + ele + '</option>');
+      } 
+    }
     $('#interests').val(inter);
     $('#music-q').val(song_genres);
     $('#movie-q').val(movie_genres);
@@ -73,7 +92,8 @@
     </div>
     <form class="questionnaire" action="/submit/" method="GET">
       <div id="music-container" class="feature">
-        <h3>What music genres do you like? Enter a custom one or click on one of our suggestions. </h3>
+        <h3>What music genres do you like?</h3>
+        <p class="instructions">Enter a custom one or click on one of our suggestions.</p>
         <select class="js-example-basic-multiple" name="all-music" multiple="multiple" id="music-q" style="width: 40%; padding: 100%;" value={{genres}}>
           <option id="dance" name="music-genre" value="Dance">Dance</option>
           <option id="folk" name="music-genre" value="Folk">Folk</option>
@@ -143,14 +163,15 @@
       </div>
 
       <div id="movie-container" class="feature">
-        <h3>What movie genres do you like? Enter a custom one or click on one of our suggestions.</h3>
+        <h3>What movie genres do you like?</h3>
+        <p class="instructions">Enter a custom one or click on one of our suggestions.</p>
         <select class="js-example-basic-multiple2" multiple="multiple" name="all-movies" id="movie-q" style="width: 40%;">
           <option id="Horror" name="movie-genre" value="Horror">Horror</option>
            <option id="Biography" name="movie-genre" value="Biography">Biography</option>
           <option id="War" name="movie-genre" value="War">War</option>
           <option id="Western" name="movie-genre" value="Western">Western</option>
           <option id="Comedy" name="movie-genre" value="Comedy">Comedy</option>
-          <option id="Sport" name="movie-genre" value="Sport">Sport</option>
+          <option id="Sport" name="movie-genre" value="Sport">Sports</option>
           <option id="History" name="movie-genre" value="History">History</option>
           <option id="Musical" name="movie-genre" value="Musical">Musical</option>
           <option id="Family" name="movie-genre" value="Family">Family</option>
@@ -169,7 +190,8 @@
       </div>
 
       <div id="hobbies" class="feature">
-        <h3>Write something about your current mood or interests, so we can better recommend you movies and podcasts. For example, "I like cooking." </h3>
+        <h3>Write something about your current mood or interests, so we can better recommend you movies and podcasts.</h3>
+        <p class="instructions">For example: "I like cooking."</p>
         <input type="search" name="interests" id="interests" style="width: 50%;" value={{interests}}>
       </div>
 
