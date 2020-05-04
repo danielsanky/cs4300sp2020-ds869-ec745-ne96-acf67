@@ -276,15 +276,22 @@ def music_recs(val_pref, energy_pref, dance_pref, genres=None):
         'LOW': lambda x: 1 - x,
         'DONT CARE': lambda x: 0.5
     }
-    # Subscores
-    val_subscore = music_filtered['valence'].apply(subscore_fn[val_pref])
-    energy_subscore = music_filtered['energy'].apply(subscore_fn[energy_pref])
-    dance_subscore = music_filtered['danceability'].apply(subscore_fn[dance_pref])
     # Weights
-    w_val, w_energy, w_dance = 1, 1, 1
-    # Total score
-    score = (w_val * val_subscore + w_energy * energy_subscore + w_dance * dance_subscore) \
-        / (w_val + w_energy + w_dance)
+    subscore_weight = lambda pref: 0 if pref == 'DONT CARE' else 1
+    w_val = subscore_weight(val_pref)
+    w_energy = subscore_weight(energy_pref)
+    w_dance = subscore_weight(dance_pref)
+    # Compute scores only if the user expresses preferences
+    if w_val + w_energy + w_dance == 0:
+        score = pd.Series('N/A', range(music_filtered.shape[0]))
+    else:
+        # Subscores
+        val_subscore = music_filtered['valence'].apply(subscore_fn[val_pref])
+        energy_subscore = music_filtered['energy'].apply(subscore_fn[energy_pref])
+        dance_subscore = music_filtered['danceability'].apply(subscore_fn[dance_pref])
+        # Total score
+        score = (w_val * val_subscore + w_energy * energy_subscore + w_dance * dance_subscore) \
+            / (w_val + w_energy + w_dance)
     results = pd.DataFrame({
         'track_id': music_filtered['track_id'],
         'title': music_filtered['track_name'],
