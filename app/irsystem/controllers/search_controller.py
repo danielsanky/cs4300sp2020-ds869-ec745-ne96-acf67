@@ -12,7 +12,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 @irsystem.route('/', methods=['GET'])
 def start():
-    return render_template('index.html')
+    i = session.get("interests",'')
+    g = session.get("genres",[])
+    v = session.get("valence",'')
+    d = session.get("danceability",'')
+    e = session.get("energy",'')
+    return render_template('index.html',interests=i, genres=g, valence=v, danceability=d, energy=e)
 
 @irsystem.route('/submit/', methods=['POST', 'GET'])
 def recommender():
@@ -89,6 +94,26 @@ def recommender():
     else:
         podcast=[]
         movie=[]
+
+    session["interests"] = interests_query
+    session["genres"] = genres
+    session["valence"] = valence
+    session["danceability"] = danceability
+    session["energy"] = energy
+    # def movie_url(imdbid):
+    #     s = str(imdbid)
+    #     return "https://www.imdb.com/title/tt{0}/".format(s.zfill(7))
+
+    # if movie_query!=[]:
+    #     movie=recs(genre_to_movie, movie_query)
+    #     movie=[{
+    #         'title': item[0],
+    #         'score': item[1],
+    #         'url': movie_url(list(movies.loc[movies["Title"] == item[0]]["imdbId"].to_dict().values())[0]),
+    #         'rating': list(movies.loc[movies["Title"] == item[0]]["IMDB Score"].to_dict().values())[0]
+    #         } for item in movie]
+    # else:
+    #     movie=[]
 
     return render_template('results.html', podcasts=podcast, movies=movie, songs=song)
 
