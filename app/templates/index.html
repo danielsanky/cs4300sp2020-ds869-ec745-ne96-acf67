@@ -9,7 +9,8 @@
   <script>
   
   var inter = {{interests|tojson}}
-  var genres = {{genres|tojson}}
+  var movie_genres = {{movie_genres|tojson}}
+  var song_genres={{song_genres|tojson}}
   var valence = {{valence|tojson}}
   var energy = {{energy|tojson}}
   var danceability = {{danceability|tojson}}
@@ -23,7 +24,8 @@
     setTimeout(callselect, 1000);
     setTimeout(showoverflow, 1000);
     $('#interests').val(inter);
-    $('#music-q').val(genres);
+    $('#music-q').val(song_genres);
+    $('#movie-q').val(movie_genres);
     var v = 'input[name="valence"][value="'.concat(valence).concat('"]');
     $(v).prop("checked", true);
     var e = 'input[name="energy"][value="'.concat(energy).concat('"]');
@@ -67,11 +69,11 @@
   <div id="content">
     <div class="title">
       <h1>TellMeWhat2Do</h1>
-      <h4>An activity generator for anyone looking for a new activity to do at home!</h4>
+      <h4 class="subhead">An activity generator for anyone looking for a new activity to do at home! </h4>
     </div>
     <form class="questionnaire" action="/submit/" method="GET">
       <div id="music-container" class="feature">
-        <h3>What music genres do you like?</h3>
+        <h3>What music genres do you like? Enter a custom one or click on one of our suggestions. </h3>
         <select class="js-example-basic-multiple" name="all-music" multiple="multiple" id="music-q" style="width: 40%; padding: 100%;" value={{genres}}>
           <option id="dance" name="music-genre" value="Dance">Dance</option>
           <option id="folk" name="music-genre" value="Folk">Folk</option>
@@ -103,43 +105,46 @@
 
 
       <div id="feature-container" class="feature">
-        <h3>How do you prefer your songs with respect to the following:</h3>
-        <h3 class="subquestion">Valence?</h3>
+        <h3 class="subquestion"> What mood are you looking for in your music? </h3>
         <div class="radio-container">
           <input type="radio" class="perspectives" name="valence" id="VLOW" value="LOW">
-          <label class="radio">Low</label>
+          <label class="radio">Negative, Sad, Angry </label>
           <input type="radio" class="perspectives" name="valence" id="VMID" value="MID">
-          <label class="radio">Medium</label>
+          <label class="radio">Neutral</label>
           <input type="radio" class="perspectives" name="valence" id="VHIGH" value="HIGH">
-          <label class="radio">High</label>
+          <label class="radio">Positive, Upbeat, Happy</label>
+          <input type="radio" class="perspectives" name="valence" id="DONT_CARE" value="DONT CARE">
+          <label class="radio">No Preference</label>
         </div>
 
-        <h3 class="subquestion">Energy?</h3>
+        <h3 class="subquestion">What energy level do you want in your music?</h3>
         <div class="radio-container">
           <input type="radio" class="perspectives" name="energy" value="LOW">
-          <label class="radio">Low</label>
+          <label class="radio">Low Energy</label>
           <input type="radio" class="perspectives" name="energy" value="MID">
-          <label class="radio">Medium</label>
+          <label class="radio">Medium Energy</label>
           <input type="radio" class="perspectives" name="energy" value="HIGH">
-          <label class="radio">High</label>
+          <label class="radio">High Energy</label>
+          <input type="radio" class="perspectives" name="energy" id="DONT_CARE" value="DONT CARE">
+          <label class="radio">No Preference</label>
         </div>
 
-        <h3 class="subquestion">Danceability?</h3>
+        <h3 class="subquestion">How danceable do you want your music to be?</h3>
         <div class="radio-container">
           <input type="radio" class="perspectives" name="danceability" value="LOW">
-          <label class="radio">Low</label>
+          <label class="radio">Not Danceable</label>
           <input type="radio" class="perspectives" name="danceability" value="MID">
-          <label class="radio">Medium</label>
+          <label class="radio">Semi-Danceable</label>
           <input type="radio" class="perspectives" name="danceability" value="HIGH">
-          <label class="radio">High</label>
+          <label class="radio">Very Danceable</label>
+          <input type="radio" class="perspectives" name="danceability" id="DONT_CARE" value="DONT CARE">
+          <label class="radio">No Preference</label>
         </div>
-
       </div>
 
-
       <div id="movie-container" class="feature">
-        <h3>What movie genres do you like?</h3>
-        <select class="js-example-basic-multiple2" multiple="multiple" name="all-movies" style="width: 40%;">
+        <h3>What movie genres do you like? Enter a custom one or click on one of our suggestions.</h3>
+        <select class="js-example-basic-multiple2" multiple="multiple" name="all-movies" id="movie-q" style="width: 40%;">
           <option id="Horror" name="movie-genre" value="Horror">Horror</option>
            <option id="Biography" name="movie-genre" value="Biography">Biography</option>
           <option id="War" name="movie-genre" value="War">War</option>
@@ -164,173 +169,14 @@
       </div>
 
       <div id="hobbies" class="feature">
-        <h3>Write something about your current mood or interests. </h3>
-        <input type="search" class="select2" name="interests" id="interests" style="width: 40%;" value={{interests}}>
-        <!-- <select class="js-example-basic-multiple3" multiple="multiple" name="interests" value="interests" style="width: 40%;">
-          <option id="News & Politics" name="interests" value="News & Politics">News & Politics</option>
-          <option id="Science & Medicine" name="interests" value="Science & Medicine">Science & Medicine</option> <option id="Social Sciences" name="interests" value="Social Sciences">Social Sciences</option>
-          <option id="Society & Culture" name="interests" value="Society & Culture">Society & Culture</option>
-          <option id="Education" name="interests" value="Education">Education</option>
-          <option id="Places & Travel" name="interests" value="Places & Travel">Places & Travel</option>
-          <option id="Sports & Recreation" name="interests" value="Sports & Recreation">Sports & Recreation</option>
-          <option id="Religion & Spirituality" name="interests" value="Religion & Spirituality">Religion & Spirituality</option>
-          <option id="History" name="interests" value="History">History</option>
-          <option id="Music" name="interests" value="Music">Music</option>
-          <option id="Business" name="interests" value="Business">Business</option>
-        </select> -->
+        <h3>Write something about your current mood or interests, so we can better recommend you movies and podcasts. For example, "I like cooking." </h3>
+        <input type="search" name="interests" id="interests" style="width: 50%;" value={{interests}}>
       </div>
-      <!--
-      <div id="personality-container" class="feature">
-      <h3 id="directions">You will now be asked to rate how much you agree with the following statements from 1-5, where 1 is strongly disagree and 5 is strongly agree.</h2>
-      <h3 class="personality-q">I often study or work even in my spare time.</h3>
-      <div class="radio-container">
-      <input type="radio" class="study" name="study" value="1">
-      <label class="radio">1</label>
-      <input type="radio" class="study" name="study" value="2">
-      <label class="radio">2</label>
-      <input type="radio" class="study" name="study" value="3">
-      <label class="radio">3</label>
-      <input type="radio" class="study" name="study" value="4">
-      <label class="radio">4</label>
-      <input type="radio" class="study" name="study" value="5">
-      <label class="radio">5</label>
-    </div>
-    <h3 class="personality-q">I look at things from all different angles before I go ahead.</h3>
-    <div class="radio-container">
-    <input type="radio" class="perspectives" name="perspectives" value="1">
-    <label class="radio">1</label>
-    <input type="radio" class="perspectives" name="perspectives" value="2">
-    <label class="radio">2</label>
-    <input type="radio" class="perspectives" name="perspectives" value="3">
-    <label class="radio">3</label>
-    <input type="radio" class="perspectives" name="perspectives" value="4">
-    <label class="radio">4</label>
-    <input type="radio" class="perspectives" name="perspectives" value="5">
-    <label class="radio">5</label>
-  </div>
-  <h3 class="personality-q">I always give to charity.</h3>
-  <div class="radio-container">
-  <input type="radio" class="charity" name="charity" value="1">
-  <label class="radio">1</label>
-  <input type="radio" class="charity" name="charity" value="2">
-  <label class="radio">2</label>
-  <input type="radio" class="charity" name="charity" value="3">
-  <label class="radio">3</label>
-  <input type="radio" class="charity" name="charity" value="4">
-  <label class="radio">4</label>
-  <input type="radio" class="charity" name="charity" value="5">
-  <label class="radio">5</label>
-</div>
-<h3 class="personality-q">I have lots of friends.</h3>
-<div class="radio-container">
-<input type="radio" class="friends" name="friends" value="1">
-<label class="radio">1</label>
-<input type="radio" class="friends" name="friends" value="2">
-<label class="radio">2</label>
-<input type="radio" class="friends" name="friends" value="3">
-<label class="radio">3</label>
-<input type="radio" class="friends" name="friends" value="4">
-<label class="radio">4</label>
-<input type="radio" class="friends" name="friends" value="5">
-<label class="radio">5</label>
-</div>
-<h3 class="personality-q">I am very patient.</h3>
-<div class="radio-container">
-<input type="radio" class="patient" name="patient" value="1">
-<label class="radio">1</label>
-<input type="radio" class="patient" name="patient" value="2">
-<label class="radio">2</label>
-<input type="radio" class="patient" name="patient" value="3">
-<label class="radio">3</label>
-<input type="radio" class="patient" name="patient" value="4">
-<label class="radio">4</label>
-<input type="radio" class="patient" name="patient" value="5">
-<label class="radio">5</label>
-</div>
-<h3 class="personality-q">I can quickly adapt to a new environment.</h3>
-<div class="radio-container">
-<input type="radio" class="adapt" name="adapt" value="1">
-<label class="radio">1</label>
-<input type="radio" class="adapt" name="adapt" value="2">
-<label class="radio">2</label>
-<input type="radio" class="adapt" name="adapt" value="3">
-<label class="radio">3</label>
-<input type="radio" class="adapt" name="adapt" value="4">
-<label class="radio">4</label>
-<input type="radio" class="adapt" name="adapt" value="5">
-<label class="radio">5</label>
-</div>
-<h3 class="personality-q">I enjoy meeting new people.</h3>
-<div class="radio-container">
-<input type="radio" class="meeting-people" name="meeting-people" value="1">
-<label class="radio">1</label>
-<input type="radio" class="meeting-people" name="meeting-people" value="2">
-<label class="radio">2</label>
-<input type="radio" class="meeting-people" name="meeting-people" value="3">
-<label class="radio">3</label>
-<input type="radio" class="meeting-people" name="meeting-people" value="4">
-<label class="radio">4</label>
-<input type="radio" class="meeting-people" name="meeting-people" value="5">
-<label class="radio">5</label>
-</div>
-<h3 class="personality-q">I have many different hobbies and interests.</h3>
-<div class="radio-container">
-<input type="radio" class="differ-hobbies" name="differ-hobbies" value="1">
-<label class="radio">1</label>
-<input type="radio" class="differ-hobbies" name="differ-hobbies" value="2">
-<label class="radio">2</label>
-<input type="radio" class="differ-hobbies" name="differ-hobbies" value="3">
-<label class="radio">3</label>
-<input type="radio" class="differ-hobbies" name="differ-hobbies" value="4">
-<label class="radio">4</label>
-<input type="radio" class="differ-hobbies" name="differ-hobbies" value="5">
-<label class="radio">5</label>
-</div>
-</div> -->
 
-<!-- <h2 id="misc-header">Miscellaneous</h2>
-<h3>How old are you?</h3>
-<input type="number" id="age" placeholder="18">
-<h3>What is your gender identity?</h3>
-<div class="radio-container">
-<input type="radio" class="gender" name="gender" value="female">
-<label class="radio">Woman</label>
-<input type="radio" class="gender" name="gender" value="male">
-<label class="radio">Man</label>
-<input type="radio" class="gender" name="gender" value="other">
-<label class="radio">Other</label>
-</div>
-<h3>Are you an only child?</h3>
-<div class="radio-container">
-<input type="radio" class="only-child" name="only-child" value="yes">
-<label class="radio">Yes</label>
-<input type="radio" class="only-child" name="only-child" value="no">
-<label class="radio">No</label>
-</div> -->
-<!-- <h3>Highest Education Achieved?</h3>
-<div class="radio-container">
-<input type="radio" class="education" name="education" value="yes">
-<label class="radio">Currently in primary school</label>
-<input type="radio" class="education" name="education" value="no">
-<label class="radio">Primary school</label>
-<input type="radio" class="education" name="education" value="yes">
-<label class="radio">Secondary school</label>
-<input type="radio" class="education" name="education" value="no">
-<label class="radio">College/Bachelor degree</label>
-</div>  -->
 
 <button type="submit" id="submit"> Done </button>
 </form>
 
-<!-- <form class="form-inline global-search">
-{% if data %}
-<h1>{{output_message}}</h1>
-{% for d in data %}
-<br>
-<p>{{d}}</p>
-{% endfor %}
-{% endif %}
-</form> -->
 </div>
 </body>
 

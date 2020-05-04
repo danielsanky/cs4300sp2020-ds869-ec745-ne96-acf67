@@ -30,36 +30,45 @@
             <h1 id="results-header">Here are our suggestions on what to do!</h1>
             <h2 id="music-results">Listen to One of these Songs</h2>
             {% if songs|length > 0 %}
-                {% for song in songs[:5] %}
+            <h4 class="music-rec"> {{ song_message }} </h4>
+                {% for song in songs %}
                     <h4 class="music-rec"><a href="{{ song['url'] }}" target="_blank">{{ song['title'] }} by {{ song['artist'] }}</a></h4>
-                    <h4 class="music-sim"><strong>Similarity Score: </strong>{{ song['score'] }}</h4>
+                    <h4 class="music-sim"><strong>Genre: </strong>{{ song['genre'] }} </h4>
+                    <h4 class="music-sim"><strong>Similarity Score: </strong>{{ song['score'] }} </h4>
                 {% endfor %}
             {% else %}
-                <h4 class="music-rec">We can't recommend you a song, since you didn't select any genres!</h4>
+                <h4 class="music-rec"> {{ song_message }} </h4>
             {% endif %}
             <br/>
 
             <h2 id="movie-results">Watch One of these Movies</h2>
+            
             {% if movies|length > 0 %}
+            <h4 class="movie-rec"> {{ movie_message}} </h4>
                 {% for movie in movies %}
                     <h4 class="movie-rec"><a href="{{ movie['url'] }}" target="_blank">{{ movie['title'] }}</a></h4>
-                    <h4 class="movie-sim"><strong>Similarity Score: </strong>{{ movie['score'] }}&#8194;|&#8194;<strong>Rating:</strong> {{ movie['rating'] }}/10.0</h4>
+                    <h4 class="movie-sim"><strong>Similarity Score: </strong> {{ movie['score'] }}</h4>
+                    <h4 class="movie-sim"> <strong>IMDB Rating:</strong> {{ movie['rating'] }}/10.0 by {{ movie['num_revs'] }} reviewers</h4>
+                    <h4 class="movie-sim"> <strong> Genre(s):</strong> {{ movie['genres'] }}</h4>
+                    <h4 class="movie-sim"> <strong> Keywords:</strong> {{ movie['words'] }}</h4>
                 {% endfor %}
             {% else %}
-                <h4 class="movie-rec">We can't recommend you a movie, since we don't know what genres you like!</h4>
+                <h4 class="movie-rec"> {{ movie_message}} </h4>
             {% endif %}
             <br/>
 
 
             <h2 id="podcast-results">Listen to One of these Podcasts</h2>
+            <h3> </h3>
             {% if podcasts|length > 0 %}
+            <h4 class="pod-rec"> {{ podcast_message }} </h4>
                 {% for podcast in podcasts %}
                     <h4 class="pod-rec"><a href="{{ podcast['url'] }}" target="_blank">{{ podcast['title'] }}</a></h4>
                     <h4 class="pod-sim" id="pod-desc">{{ podcast['description'] }}</h4>
                     <h4 class="pod-sim">Similarity Score: {{ podcast['score'] }}</h4>
                 {% endfor %}
             {% else %}
-                <h4 class="pod-rec">We can't recommend you a podcast, since we don't know your interests!</h4>
+                <h4 class="pod-rec"> {{ podcast_message }} </h4>
             {% endif %}
 
             <a href="/">

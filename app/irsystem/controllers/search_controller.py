@@ -13,11 +13,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 @irsystem.route('/', methods=['GET'])
 def start():
     i = session.get("interests",'')
-    g = session.get("genres",[])
+    s = session.get("song_genres",[])
+    m = session.get("movie_genres",[])
     v = session.get("valence",'')
     d = session.get("danceability",'')
     e = session.get("energy",'')
-    return render_template('index.html',interests=i, genres=g, valence=v, danceability=d, energy=e)
+    return render_template('index.html',interests=i, song_genres=s, movie_genres=m, valence=v, danceability=d, energy=e)
 
 @irsystem.route('/submit/', methods=['POST', 'GET'])
 def recommender():
@@ -46,8 +47,15 @@ def recommender():
     if song_genres!=[]:
         mod_music_query=mod_query(song_genres, music_qs)
         song=music_recs(valence, energy, danceability, mod_music_query)
+        song_message="Here are some songs that we think match your inputted genre, mood, energy and/or danceability."
     else: 
         song=music_recs(valence, energy, danceability)
+        if valence=="DONT CARE" and energy=="DONT CARE" and danceability=="DONT CARE":
+          # song_message="
+            song_message="Because we don't know your preferences, here are 5 random songs. "
+        else:
+            song_message="Here are some songs that we think match your preferred mood, energy, and/or danceability."
+        #if all 3 are 'dont care', give mesage about random numbers being outputted 
 
     #get ready to display
     song=[{
@@ -60,62 +68,75 @@ def recommender():
 
 
     #PODCASTS AND MOVIES
-    if type(interests_query)==str:
+    if len(interests_query)>0:
         podcast=podcast_recs(interests_query)
-        if podcast[0]: 
-             podcast=[{
+        if podcast!=[]: 
+            podcast=[{
             'title': item[0],
             'description': item[1],
             'url': item[2],
             'score': item[3]
             } for item in podcast]
+            podcast_message="Here are the podcasts we recommend based on your input, "+ str(interests_query)+ '.'
         else:
-            podcast=[]
+            podcast_message="Please try again! We couldn't find any results for your query, " + str(interests_query)+ '.'
+            podcast=""
 
-        if movie_genres!=[]:
+        if movie_genres!=[]:  
             mod_movie_query=mod_query(movie_genres, movie_qs)
-            movie=movie_recs(interests_query,mod_movie_query)
+            movie=movie_recs(interests_query, mod_movie_query)
+            movie_message="Here are the podcasts we recommend based on your inputs of "+ str(interests_query)+ " and  "+ str(movie_genres)[1:-1]+"."
         else:
             movie=movie_recs(interests_query)
+            movie_message="Here are the podcasts we recommend based on your input, "+ str(interests_query)+"."
+
     
-        if movie[0]: 
+        if movie: 
             movie=[{
             'title': item[0],
             'year': item[1],
-            'url': item[3], 
+            'link': item[3], 
             'num_revs': item[2],
             'rating': item[4],
-            #'genre': item[5],
-            'score': item[5]
+            'score': item[5], 
+            'words': item[6].replace("|", ", "), 
+            'genres': item[7].replace("|", ", ")
             } for item in movie]
+
         else:
-            movie=[]
+            movie_message="Please try again! We couldn't find any results for your query, "+ str(interests_query)+ "."
+            movie=""
         
-    else:
-        podcast=[]
-        movie=[]
+    else:        
+        podcast_message="Sorry, we can't recommend you any podcasts because we don't know about your interests. "
+        podcast=""
+        if movie_genres!=[]:
+            mod_movie_query=mod_query(movie_genres, movie_qs)
+            movie=movie_recs("",  mod_movie_query)
+            if movie: 
+                movie=[{
+                'title': item[0],
+                'year': item[1],
+                'link': item[3], 
+                'num_revs': item[2],
+                'rating': item[4],
+                'score': item[5], 
+                'words': item[6].replace("|", ", "), 
+                'genres': item[7].replace("|", ", ")
+                 } for item in movie]
+            movie_message="Here are the movies we recommend based on your inputted genres, "+str(movie_genres)[1:-1]+"."
+        else: 
+            movie_message="Sorry, we can't recommend you any movies because we don't know about your preferences "
+            movie=""
 
     session["interests"] = interests_query
-    session["genres"] = genres
+    session["song_genres"] = song_genres
+    session["movie_genres"] = movie_genres
     session["valence"] = valence
     session["danceability"] = danceability
     session["energy"] = energy
-    # def movie_url(imdbid):
-    #     s = str(imdbid)
-    #     return "https://www.imdb.com/title/tt{0}/".format(s.zfill(7))
 
-    # if movie_query!=[]:
-    #     movie=recs(genre_to_movie, movie_query)
-    #     movie=[{
-    #         'title': item[0],
-    #         'score': item[1],
-    #         'url': movie_url(list(movies.loc[movies["Title"] == item[0]]["imdbId"].to_dict().values())[0]),
-    #         'rating': list(movies.loc[movies["Title"] == item[0]]["IMDB Score"].to_dict().values())[0]
-    #         } for item in movie]
-    # else:
-    #     movie=[]
-
-    return render_template('results.html', podcasts=podcast, movies=movie, songs=song)
+    return render_template('results.html', songs=song, song_message=song_message, podcasts=podcast, podcast_message=podcast_message, movies=movie, movie_message=movie_message)
 
 #load data
 resp = pd.read_csv("young-people-survey/responses.csv")
@@ -154,11 +175,27 @@ def mod_query(query, poss_q_list):
                     n_query.append(ed_list[i][0])
     return n_query
 
+genre_to_movie={}
+for i in range(len(movies)):
+    line=str(movies.iloc[i]["genres"])
+    for genre in line.split("|"):
+        genre=genre.lower()
+        if genre in genre_to_movie:
+            genre_to_movie[genre].append(movies.iloc[i]["movie_imdb_link"])
+        else: 
+            genre_to_movie[genre]=[movies.iloc[i]["movie_imdb_link"]]
+
 def cosine_sim(corpus):
     vectorizer=TfidfVectorizer(stop_words="english", min_df=1)
     tfidf = vectorizer.fit_transform(corpus)
     similarity = tfidf * tfidf.T
     return similarity.toarray()
+
+def filter_mov(query):
+    mod_movies=pd.DataFrame()
+    for value in query:
+        mod_movies=mod_movies.append(movies[movies["movie_imdb_link"].isin(genre_to_movie[value])])
+    return mod_movies.drop_duplicates("movie_imdb_link", keep="first")
 
 def get_max_val_podcast(np_array): 
     index_max_val=np.argmax(np_array)
@@ -169,9 +206,9 @@ def get_max_val_podcast(np_array):
         np_array[index_max_val]=0
     return output
 
-def get_max_val_movie(np_array):
+def get_max_val_movie(np_array, movies_filtered):
     index_max_val=np.argmax(np_array)
-    output=(movies.iloc[index_max_val][:]["movie_title"], movies.iloc[index_max_val][:]["title_year"], movies.iloc[index_max_val][:]["num_voted_users"], movies.iloc[index_max_val][:]["movie_imdb_link"], movies.iloc[index_max_val][:]["imdb_score"],np_array[index_max_val])
+    output=(movies_filtered.iloc[index_max_val][:]["movie_title"], movies_filtered.iloc[index_max_val][:]["title_year"], movies_filtered.iloc[index_max_val][:]["num_voted_users"], movies_filtered.iloc[index_max_val][:]["movie_imdb_link"], movies_filtered.iloc[index_max_val][:]["imdb_score"],np_array[index_max_val],  movies_filtered.iloc[index_max_val][:]["plot_keywords"], movies_filtered.iloc[index_max_val][:]["genres"])
     if np_array[index_max_val]==0:
         return 
     else: 
@@ -184,22 +221,42 @@ def podcast_recs(query):
     matrix=cosine_sim(corpus)
     matrix_slice=matrix[:][0][1:]
     result=[]
-    for x in range(5):
+    for x in range(3):
         result.append(get_max_val_podcast(matrix_slice))
     while None in result:
         result.remove(None)
     return result
 
-def movie_recs(query):
-    plot_keywords=list(movies['plot_keywords'])
+def movie_filter(genres, query):
+    overlap=[]
+    for genre_exp in genres:
+        for genre in query:
+            if genre in genre_exp:
+                overlap.append(genre_exp)
+    return overlap
+
+def movie_recs(query, genres=None):
+    if genres is None:
+        movies_filtered = movies
+    else:
+        genres=[genre.lower() for genre in genres]
+        movies_filtered=filter_mov(genres)
+        movies_filtered = movies_filtered.sample(frac=1).reset_index(drop=True)
+        if query == "" :
+            result=[]
+            for i in range(3): 
+                output=(movies_filtered.iloc[i][:]["movie_title"], movies_filtered.iloc[i][:]["title_year"], movies_filtered.iloc[i][:]["num_voted_users"], movies_filtered.iloc[i][:]["movie_imdb_link"], movies_filtered.iloc[i][:]["imdb_score"], "N/A",  movies_filtered.iloc[i][:]["plot_keywords"], movies_filtered.iloc[i][:]["genres"])
+                result.append(output)
+            return result 
+    plot_keywords=list(movies_filtered['plot_keywords'])
     for i in range(len(plot_keywords)):
         plot_keywords[i]=plot_keywords[i].replace('|', " ")
     corpus=[query]+plot_keywords
     matrix=cosine_sim(corpus)
     matrix_slice=matrix[:][0][1:]
     result=[]
-    for x in range(5):
-        movie=get_max_val_movie(matrix_slice)
+    for x in range(3):
+        movie=get_max_val_movie(matrix_slice, movies_filtered)
         result.append(movie)
     while None in result:
         result.remove(None)
@@ -226,7 +283,7 @@ def music_recs(val_pref, energy_pref, dance_pref, genres=None):
     # Weights
     w_val, w_energy, w_dance = 1, 1, 1
     # Total score
-    score = (w_val * val_subscore + w_energy * energy_subscore + w_dan ce * dance_subscore) \
+    score = (w_val * val_subscore + w_energy * energy_subscore + w_dance * dance_subscore) \
         / (w_val + w_energy + w_dance)
     results = pd.DataFrame({
         'track_id': music_filtered['track_id'],
@@ -243,4 +300,4 @@ def music_recs(val_pref, energy_pref, dance_pref, genres=None):
     # 4. Sort descending by score
     results.sort_values('score', ascending=False, inplace=True)
     results=[tuple(r) for r in results.to_numpy()]
-    return results[:5]
+    return results[:3]
