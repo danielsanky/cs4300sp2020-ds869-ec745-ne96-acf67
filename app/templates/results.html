@@ -41,7 +41,7 @@
 
             <h2 id="movie-results">Watch One of these Movies</h2>
             {% if movies|length > 0 %}
-                {% for movie in movies[:5] %}
+                {% for movie in movies %}
                     <h4 class="movie-rec"><a href="{{ movie['url'] }}" target="_blank">{{ movie['title'] }}</a></h4>
                     <h4 class="movie-sim">Similarity Score: {{ movie['score'] }}&#8194;|&#8194;Rating: {{ movie['rating'] }}/10.0</h4>
                 {% endfor %}
@@ -53,7 +53,7 @@
 
             <h2 id="podcast-results">Listen to One of these Podcasts</h2>
             {% if podcasts|length > 0 %}
-                {% for podcast in podcasts[:5] %}
+                {% for podcast in podcasts %}
                     <h4 class="pod-rec"><a href="{{ podcast['url'] }}" target="_blank">{{ podcast['title'] }}</a></h4>
                     <h4 class="pod-sim">Description: {{ podcast['description'] }}</h4>
                     <h4 class="pod-sim">Similarity Score: {{ podcast['score'] }}</h4>

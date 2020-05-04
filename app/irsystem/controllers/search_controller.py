@@ -144,7 +144,7 @@ def get_max_val_podcast(np_array):
     index_max_val=np.argmax(np_array)
     output=(podcasts.iloc[index_max_val][:]["Name"], podcasts.iloc[index_max_val][:]["Description"], podcasts.iloc[index_max_val][:]["Podcast URL"], np_array[index_max_val])
     if np_array[index_max_val]==0:
-        return ()
+        return 
     else: 
         np_array[index_max_val]=0
     return output
@@ -153,11 +153,10 @@ def get_max_val_movie(np_array):
     index_max_val=np.argmax(np_array)
     output=(movies.iloc[index_max_val][:]["movie_title"], movies.iloc[index_max_val][:]["title_year"], movies.iloc[index_max_val][:]["num_voted_users"], movies.iloc[index_max_val][:]["movie_imdb_link"], movies.iloc[index_max_val][:]["imdb_score"],np_array[index_max_val])
     if np_array[index_max_val]==0:
-        return ()
+        return 
     else: 
         np_array[index_max_val]=0
     return output
-
 
 def podcast_recs(query):
     descriptions=list(podcasts['Description'])
@@ -167,6 +166,8 @@ def podcast_recs(query):
     result=[]
     for x in range(5):
         result.append(get_max_val_podcast(matrix_slice))
+    while None in result:
+        result.remove(None)
     return result
 
 def movie_recs(query):
@@ -178,9 +179,11 @@ def movie_recs(query):
     matrix_slice=matrix[:][0][1:]
     result=[]
     for x in range(5):
-        result.append(get_max_val_movie(matrix_slice))
+        movie=get_max_val_movie(matrix_slice)
+        result.append(movie)
+    while None in result:
+        result.remove(None)
     return result
-
 
 def music_recs(val_pref, energy_pref, dance_pref, genres=None):
     # 1. Filter by genres (None means no filtering)
