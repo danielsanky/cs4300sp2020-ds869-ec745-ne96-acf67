@@ -33,8 +33,8 @@
             <h4 class="music-rec-label"> {{ song_message }} </h4>
                 {% for song in songs %}
                     <h4 class="music-rec"><a href="{{ song['url'] }}" target="_blank">{{ song['title'] }} by {{ song['artist'] }}</a></h4>
-                    <h4 class="music-sim"><strong>Genre: </strong>{{ song['genre'] }} </h4>
-                    <h4 class="music-sim"><strong>Similarity Score*: </strong>{{ song['score'] }} </h4>
+                    <h4 class="music-sim2"><strong>Genre: </strong>{{ song['genre'] }} </h4>
+                    <h4 class="music-sim"><strong class="star">*</strong><strong>Similarity Score: </strong>{{ song['score'] }} </h4>
                 {% endfor %}
             {% else %}
                 <h4 class="music-rec-label"> {{ song_message }} </h4>
@@ -47,10 +47,10 @@
             <h4 class="movie-rec-label"> {{ movie_message}} </h4>
                 {% for movie in movies %}
                     <h4 class="movie-rec"><a href="{{ movie['url'] }}" target="_blank">{{ movie['title'] }}</a></h4>
-                    <h4 class="movie-sim"><strong>Similarity Score*: </strong> {{ movie['score'] }}</h4>
-                    <h4 class="movie-sim"> <strong>IMDB Rating:</strong> {{ movie['rating'] }}/10.0 by {{ movie['num_revs'] }} reviewers</h4>
+                    <h4 class="movie-sim"><strong class="star">*</strong><strong>Similarity Score: </strong> {{ movie['score'] }}</h4>
+                    <h4 class="movie-sim2"> <strong>IMDB Rating:</strong> {{ movie['rating'] }}/10.0 by {{ movie['num_revs'] }} reviewers</h4>
                     <h4 class="movie-sim"> <strong> Genre(s):</strong> {{ movie['genres'] }}</h4>
-                    <h4 class="movie-sim"> <strong> Keywords:</strong> {{ movie['words'] }}</h4>
+                    <h4 class="movie-sim2"> <strong> Keywords:</strong> {{ movie['words'] }}</h4>
                 {% endfor %}
             {% else %}
                 <h4 class="movie-rec-label"> {{ movie_message}} </h4>
@@ -64,7 +64,7 @@
                 {% for podcast in podcasts %}
                     <h4 class="pod-rec"><a href="{{ podcast['url'] }}" target="_blank">{{ podcast['title'] }}</a></h4>
                     <h4 class="pod-sim" id="pod-desc">{{ podcast['description'] }}</h4>
-                    <h4 class="pod-sim">Similarity Score*: {{ podcast['score'] }}</h4>
+                    <h4 class="pod-sim2"><strong class="star">*</strong>Similarity Score: {{ podcast['score'] }}</h4>
                 {% endfor %}
             {% else %}
                 <h4 class="pod-rec-label"> {{ podcast_message }} </h4>
@@ -73,7 +73,7 @@
             <a href="/">
                 <button id="back">Take Quiz Again</button>
             </a>
-            <p id="simscore">*Similarity scores for songs are calculated using weights for valence, energy, and danceability values from the Spotify API. For movies and podcasts, we use TF-IDF with cosine similarity to produce similarity scores. We filter results for genre if the user provides one, for movies and podcasts. </p>
+            <p id="simscore"><strong id="star">*</strong>Similarity scores for songs are calculated using weights for valence, energy, and danceability values from the Spotify API. For movies and podcasts, we use TF-IDF with cosine similarity to produce similarity scores. We filter results for genre if the user provides one, for movies and podcasts. </p>
 
         </div>
     </body>
