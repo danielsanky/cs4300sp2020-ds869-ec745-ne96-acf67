@@ -46,7 +46,7 @@
             {% if movies|length > 0 %}
             <h4 class="movie-rec-label"> {{ movie_message}} </h4>
                 {% for movie in movies %}
-                    <h4 class="movie-rec"><a href="{{ movie['url'] }}" target="_blank">{{ movie['title'] }}</a></h4>
+                    <h4 class="movie-rec"><a href="{{ movie['link'] }}" target="_blank">{{ movie['title'] }}</a></h4>
                     <h4 class="movie-sim"><strong class="star">*</strong><strong>Similarity Score: </strong> {{ movie['score'] }}</h4>
                     <h4 class="movie-sim2"> <strong>IMDB Rating:</strong> {{ movie['rating'] }}/10.0 by {{ movie['num_revs'] }} reviewers</h4>
                     <h4 class="movie-sim"> <strong> Genre(s):</strong> {{ movie['genres'] }}</h4>
