@@ -51,7 +51,7 @@ def recommender():
     else: 
         song=music_recs(valence, energy, danceability)
         if valence=="DONT CARE" and energy=="DONT CARE" and danceability=="DONT CARE":
-            song_message="Because we don't know your preferences, here are 5 random songs. "
+            song_message="Because we don't know your preferences, here are 3 random songs. "
         else:
             song_message="Here are some songs that we think match your preferred mood, energy, and/or danceability."
         #if all 3 are 'dont care', give mesage about random numbers being outputted 
@@ -124,7 +124,7 @@ def recommender():
                  } for item in movie]
             movie_message="Here are the movies we recommend based on your inputted genres: "+str(movie_genres)[1:-1]+"."
         else: 
-            movie_message="Sorry, we can't recommend you any movies because we don't know about your preferences "
+            movie_message="Sorry, we can't recommend you any movies because we don't know about your preferences. "
             movie=""
 
     session["interests"] = interests_query

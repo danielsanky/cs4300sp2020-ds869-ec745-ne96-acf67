@@ -76,6 +76,7 @@ h2 {
 h3 {
     font-size: 20px;
 }
+
 .music-rec, .pod-rec, .movie-rec {
     margin-bottom: 0;
 }
@@ -310,4 +311,9 @@ a {
 
 .subhead {
     font-style: italic; 
+}
+
+#simscore {
+    font-size: 15px; 
+    padding-bottom: 10%; 
 }
