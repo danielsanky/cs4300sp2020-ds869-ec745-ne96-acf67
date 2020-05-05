@@ -75,9 +75,9 @@ def recommender():
             'url': item[2],
             'score': item[3]
             } for item in podcast]
-            podcast_message="Here are the podcasts we recommend based on your input, "+ str(interests_query)+ '.'
+            podcast_message="Here are the podcasts we recommend based on your input: "+ str(interests_query)+ '.'
         else:
-            podcast_message="Please try again! We couldn't find any results for your query, " + str(interests_query)+ '.'
+            podcast_message="Please try again! We couldn't find any results for your query: " + str(interests_query)+ '.'
             podcast=""
 
         if movie_genres!=[]:  
@@ -86,7 +86,7 @@ def recommender():
             movie_message="Here are the podcasts we recommend based on your inputs of "+ str(interests_query)+ " and  "+ str(movie_genres)[1:-1]+"."
         else:
             movie=movie_recs(interests_query)
-            movie_message="Here are the podcasts we recommend based on your input, "+ str(interests_query)+"."
+            movie_message="Here are the podcasts we recommend based on your input: "+ str(interests_query)+"."
 
     
         if movie: 
@@ -102,7 +102,7 @@ def recommender():
             } for item in movie]
 
         else:
-            movie_message="Please try again! We couldn't find any results for your query, "+ str(interests_query)+ "."
+            movie_message="Please try again! We couldn't find any results for your query: "+ str(interests_query)+ "."
             movie=""
         
     else:        
@@ -122,7 +122,7 @@ def recommender():
                 'words': item[6].replace("|", ", "), 
                 'genres': item[7].replace("|", ", ")
                  } for item in movie]
-            movie_message="Here are the movies we recommend based on your inputted genres, "+str(movie_genres)[1:-1]+"."
+            movie_message="Here are the movies we recommend based on your inputted genres: "+str(movie_genres)[1:-1]+"."
         else: 
             movie_message="Sorry, we can't recommend you any movies because we don't know about your preferences "
             movie=""
