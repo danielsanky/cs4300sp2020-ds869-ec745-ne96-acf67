@@ -280,7 +280,7 @@ def music_recs(val_pref, energy_pref, dance_pref, genres=None):
     w_dance = subscore_weight(dance_pref)
     # Compute scores only if the user expresses preferences
     if w_val + w_energy + w_dance == 0:
-        score = pd.Series('N/A', range(music_filtered.shape[0]))
+        score="N/A"
     else:
         # Subscores
         val_subscore = music_filtered['valence'].apply(subscore_fn[val_pref])
