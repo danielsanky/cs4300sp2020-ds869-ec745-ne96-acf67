@@ -51,7 +51,6 @@ def recommender():
     else: 
         song=music_recs(valence, energy, danceability)
         if valence=="DONT CARE" and energy=="DONT CARE" and danceability=="DONT CARE":
-          # song_message="
             song_message="Because we don't know your preferences, here are 5 random songs. "
         else:
             song_message="Here are some songs that we think match your preferred mood, energy, and/or danceability."
@@ -61,11 +60,10 @@ def recommender():
     song=[{
             'title': item[1],
             'artist': item[2],
-            'url': "https://open.spotify.com/embed/track/"+item[0],
+            'url': "https://open.spotify.com/embed/track/"+str(item[0]),
             'genre': item[6], 
             'score': item[7]
             } for item in song]
-
 
     #PODCASTS AND MOVIES
     if len(interests_query)>0:
@@ -139,7 +137,6 @@ def recommender():
     return render_template('results.html', songs=song, song_message=song_message, podcasts=podcast, podcast_message=podcast_message, movies=movie, movie_message=movie_message)
 
 #load data
-resp = pd.read_csv("young-people-survey/responses.csv")
 podcasts=pd.read_csv("young-people-survey/df_popular_podcasts.csv")
 word_exp=re.compile("[^\x00-\x7F]+")
 non_eng_pod=[index for index,value in enumerate(list(podcasts["Name"].to_dict().values())) if len(re.findall(word_exp,value))!=0]
@@ -150,7 +147,7 @@ movies=movies[movies["imdb_score"].astype(float)>float(5.0)]
 movies=movies.dropna().drop_duplicates("movie_imdb_link", keep="first")
 
 music=pd.read_csv("young-people-survey/SpotifyFeatures.csv")
-music=music.drop_duplicates("track_id")
+music=music.drop_duplicates("track_id").dropna()
 
 music_qs=list(Counter(list(music["genre"].to_dict().values())).keys())
 movie_qs=['Horror', 'Biography', 'War', 'Western', 'Comedy', 'Sport', 'History', 'Musical', 'Family', 'Action', 'Animation', 'Adventure', 'Sci-Fi','Fantasy', 'Trhiller', 'Romance', 'Drama', 'Crime', 'Mystery', 'Documentary' ]
