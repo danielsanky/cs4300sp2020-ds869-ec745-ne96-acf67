@@ -55,13 +55,16 @@ def recommender():
             song_message="Here are some songs that we think match your preferred mood, energy, and/or danceability."
         #if all 3 are 'dont care', give mesage about random numbers being outputted 
 
+    # Display floating-point relevance scores as percents
+    as_percent = lambda x: '{:.0%}'.format(x) if type(x) == float else x
+
     #get ready to display
     song=[{
             'title': item[1],
             'artist': item[2],
             'url': "https://open.spotify.com/embed/track/"+str(item[0]),
             'genre': item[6], 
-            'score': item[7]
+            'score': as_percent(item[7])
             } for item in song]
 
     #PODCASTS AND MOVIES
@@ -72,7 +75,7 @@ def recommender():
             'title': item[0],
             'description': item[1],
             'url': item[2],
-            'score': item[3]
+            'score': as_percent(item[3])
             } for item in podcast]
             podcast_message="Here are the podcasts we recommend based on your input: "+ str(interests_query)+ '.'
         else:
@@ -95,7 +98,7 @@ def recommender():
             'link': item[3], 
             'num_revs': item[2],
             'rating': item[4],
-            'score': item[5], 
+            'score': as_percent(item[5]), 
             'words': item[6].replace("|", ", "), 
             'genres': item[7].replace("|", ", ")
             } for item in movie]
@@ -117,7 +120,7 @@ def recommender():
                 'link': item[3], 
                 'num_revs': item[2],
                 'rating': item[4],
-                'score': item[5], 
+                'score': as_percent(item[5]), 
                 'words': item[6].replace("|", ", "), 
                 'genres': item[7].replace("|", ", ")
                  } for item in movie]
