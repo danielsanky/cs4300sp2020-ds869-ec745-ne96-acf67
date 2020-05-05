@@ -140,7 +140,8 @@ podcasts=pd.read_csv("young-people-survey/df_popular_podcasts.csv")
 word_exp=re.compile("[^\x00-\x7F]+")
 non_eng_pod=[index for index,value in enumerate(list(podcasts["Name"].to_dict().values())) if len(re.findall(word_exp,value))!=0]
 podcasts=podcasts.drop(non_eng_pod).drop_duplicates("Name", keep="first")
-#podcasts=podcasts[:10000]
+podcasts= podcasts.sample(frac=1).reset_index(drop=True)
+podcasts=podcasts[:75000]
 
 movies=pd.read_csv("young-people-survey/movie_metadata.csv")
 movies=movies[movies["imdb_score"].astype(float)>float(5.0)]
