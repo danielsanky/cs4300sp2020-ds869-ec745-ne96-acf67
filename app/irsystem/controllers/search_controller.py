@@ -150,7 +150,7 @@ movies=movies.dropna().drop_duplicates("movie_imdb_link", keep="first")
 music=pd.read_csv("young-people-survey/SpotifyFeatures.csv")
 music=music.drop_duplicates("track_id").dropna()
 music= music.sample(frac=1).reset_index(drop=True)
-music=music[:100000]
+music=music[:50000]
 
 
 music_qs=list(Counter(list(music["genre"].to_dict().values())).keys())
