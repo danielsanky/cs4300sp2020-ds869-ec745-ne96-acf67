@@ -204,7 +204,7 @@ def filter_mov(query):
 
 def get_max_val_podcast(np_array): 
     index_max_val=np.argmax(np_array)
-    output=(podcasts.iloc[index_max_val][:]["Name"], podcasts.iloc[index_max_val][:]["Description"], podcasts.iloc[index_max_val][:]["Podcast URL"], np_array[index_max_val])
+    output=(podcasts.iloc[index_max_val][:]["Name"], podcasts.iloc[index_max_val][:]["Description"], podcasts.iloc[index_max_val][:]["Podcast URL"], float(np_array[index_max_val]))
     if np_array[index_max_val]==0:
         return 
     else: 
@@ -213,7 +213,7 @@ def get_max_val_podcast(np_array):
 
 def get_max_val_movie(np_array, movies_filtered):
     index_max_val=np.argmax(np_array)
-    output=(movies_filtered.iloc[index_max_val][:]["movie_title"], movies_filtered.iloc[index_max_val][:]["title_year"], movies_filtered.iloc[index_max_val][:]["num_voted_users"], movies_filtered.iloc[index_max_val][:]["movie_imdb_link"], movies_filtered.iloc[index_max_val][:]["imdb_score"],np_array[index_max_val],  movies_filtered.iloc[index_max_val][:]["plot_keywords"], movies_filtered.iloc[index_max_val][:]["genres"])
+    output=(movies_filtered.iloc[index_max_val][:]["movie_title"], movies_filtered.iloc[index_max_val][:]["title_year"], movies_filtered.iloc[index_max_val][:]["num_voted_users"], movies_filtered.iloc[index_max_val][:]["movie_imdb_link"], movies_filtered.iloc[index_max_val][:]["imdb_score"], float(np_array[index_max_val]),  movies_filtered.iloc[index_max_val][:]["plot_keywords"], movies_filtered.iloc[index_max_val][:]["genres"])
     if np_array[index_max_val]==0:
         return 
     else: 
