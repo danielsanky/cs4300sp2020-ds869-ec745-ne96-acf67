@@ -141,15 +141,16 @@ podcasts=pd.read_csv("young-people-survey/df_popular_podcasts.csv")
 word_exp=re.compile("[^\x00-\x7F]+")
 non_eng_pod=[index for index,value in enumerate(list(podcasts["Name"].to_dict().values())) if len(re.findall(word_exp,value))!=0]
 podcasts=podcasts.drop(non_eng_pod).drop_duplicates("Name", keep="first")
-podcasts=podcasts[:300]
+podcasts=podcasts[:1000]
 
 movies=pd.read_csv("young-people-survey/movie_metadata.csv")
 movies=movies[movies["imdb_score"].astype(float)>float(5.0)]
 movies=movies.dropna().drop_duplicates("movie_imdb_link", keep="first")
-movies=movies[:300]
+movies=movies[:1000]
 
 music=pd.read_csv("young-people-survey/SpotifyFeatures.csv")
 music=music.drop_duplicates("track_id").dropna()
+
 
 music_qs=list(Counter(list(music["genre"].to_dict().values())).keys())
 movie_qs=['Horror', 'Biography', 'War', 'Western', 'Comedy', 'Sport', 'History', 'Musical', 'Family', 'Action', 'Animation', 'Adventure', 'Sci-Fi','Fantasy', 'Trhiller', 'Romance', 'Drama', 'Crime', 'Mystery', 'Documentary' ]
