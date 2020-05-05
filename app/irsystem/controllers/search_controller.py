@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 import collections 
 from collections import Counter 
-import random
 import nltk
 import re
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -141,15 +140,17 @@ podcasts=pd.read_csv("young-people-survey/df_popular_podcasts.csv")
 word_exp=re.compile("[^\x00-\x7F]+")
 non_eng_pod=[index for index,value in enumerate(list(podcasts["Name"].to_dict().values())) if len(re.findall(word_exp,value))!=0]
 podcasts=podcasts.drop(non_eng_pod).drop_duplicates("Name", keep="first")
-podcasts=podcasts[:10000]
+#podcasts=podcasts[:10000]
 
 movies=pd.read_csv("young-people-survey/movie_metadata.csv")
 movies=movies[movies["imdb_score"].astype(float)>float(5.0)]
 movies=movies.dropna().drop_duplicates("movie_imdb_link", keep="first")
-movies=movies[:10000]
+#movies=movies[:10000]
 
 music=pd.read_csv("young-people-survey/SpotifyFeatures.csv")
 music=music.drop_duplicates("track_id").dropna()
+music= music.sample(frac=1).reset_index(drop=True)
+music=music[:100000]
 
 
 music_qs=list(Counter(list(music["genre"].to_dict().values())).keys())
